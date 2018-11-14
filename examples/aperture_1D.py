@@ -90,7 +90,7 @@ def propagate_with_wofry(wavefront,x,wavelength,propagation_distance,
     else:
         raise NotImplementedError
 
-    wf1 = propagator.do_propagation(propagation_parameters, FresnelZoom1D.HANDLER_NAME)
+    wf1 = propagator.do_propagation(propagation_parameters, handler_name)
 
     return wf1.get_complex_amplitude(), wf1.get_abscissas()
 
@@ -122,7 +122,9 @@ def propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method="pro
     elif method == 'propIR':
         pass
     elif method == 'exact_prop_numba':
-        pass
+        out_ = np.zeros((N),dtype='complex128')
+        L_ = L_in.copy()
+        exact_prop_numba(in_wave,out_,L_in,L_,wavel,z)
     elif method == 'exact_prop':
         out_ = np.zeros((N),dtype='complex128')
         L_ = L_in.copy()
@@ -192,7 +194,7 @@ if __name__ == "__main__":
     #
     # propagation sajid
     #
-    method="propTF"
+    method="exact_prop_numba"
     wavefront_propagated_s, x_propagated_s = propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method=method)
 
     plot_intensity(wavefront_propagated_s,x_propagated_s,xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",

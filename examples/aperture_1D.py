@@ -139,7 +139,7 @@ def propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method="pro
 
 def plot_intensity(wavefront,x,xlabel="",ylabel="",title=""):
     # plot intensity
-    plt.plot(1e6*x,np.abs(wavefront)**2)
+    plt.plot(x,np.abs(wavefront)**2)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
@@ -179,7 +179,7 @@ if __name__ == "__main__":
     # apply aperture
     wavefront[np.where(np.abs(x)>(aperture_diameter/2))] = 0.0
 
-    plot_intensity(wavefront,x,xlabel="x [um]",ylabel="source intensity [arbitrary units]",title="incident wavefront")
+    plot_intensity(wavefront,1e6*x,xlabel="x [um]",ylabel="source intensity [arbitrary units]",title="incident wavefront")
 
     #
     # propagation wofry
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     method = "integral"
     wavefront_propagated, x_propagated = propagate_with_wofry(wavefront,x,wavelength,propagation_distance,method=method)
 
-    plot_intensity(wavefront_propagated,x_propagated,xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
+    plot_intensity(wavefront_propagated,1e6*x_propagated,xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
                    title="propagated with WOFRY (%s)"%method)
 
 
@@ -197,6 +197,6 @@ if __name__ == "__main__":
     method="exact_prop_numba"
     wavefront_propagated_s, x_propagated_s = propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method=method)
 
-    plot_intensity(wavefront_propagated_s,x_propagated_s,xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
+    plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
                    title="propagated with SAJID (%s)"%method)
 

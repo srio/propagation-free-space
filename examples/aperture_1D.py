@@ -100,7 +100,8 @@ def propagate_with_wofry(wavefront,x,wavelength,propagation_distance,
 
 def propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method="propTF"):
 
-    from xray_wave_propagators.propagators_1d import propTF,exact_prop,exact_prop_numba
+    from xwp.spectral_1d import propTF
+    from xwp.exact_1d import exact_prop,exact_prop_numba
 
     wavel = wavelength
     pi = np.pi

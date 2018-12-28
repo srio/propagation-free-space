@@ -36,7 +36,7 @@ def initialize_wofry_propagators():
     return propagator
 
 def propagate_with_wofry(wavefront,x,wavelength,propagation_distance,
-                         method='fft',):
+                         method='fft',aperture_diameter=10e-6):
 
     from wofry.propagator.wavefront1D.generic_wavefront import GenericWavefront1D
     from wofry.propagator.propagator import PropagationElements
@@ -194,8 +194,8 @@ if __name__ == "__main__":
     # apply aperture
     wavefront[np.where(np.abs(x)>(aperture_diameter/2))] = 0.0
 
-    plot_intensity(wavefront,1e6*x,
-                   xlabel="x [um]",ylabel="source intensity [arbitrary units]",title="incident wavefront")
+    # plot_intensity(wavefront,1e6*x,
+    #                xlabel="x [um]",ylabel="source intensity [arbitrary units]",title="incident wavefront")
 
     #
     # propagation wofry
@@ -203,10 +203,13 @@ if __name__ == "__main__":
     method = "integral"
     wavefront_propagated, x_propagated = propagate_with_wofry(wavefront,x,wavelength,propagation_distance,method=method)
 
-    plot_intensity(wavefront_propagated,1e6*x_propagated,wavefront, 1e6 * x,
-                xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
-                title="propagated_with_WOFRY_(%s)"%method)
-
+    plot_intensity(
+                        wavefront_propagated, 1e6 * x_propagated,
+                        wavefront, 1e6 * x,
+                        xlabel="x [um]",ylabel="intensity [arbitrary units]",
+                        legend=["Propagated wavefield","Input wavefield"],legend_position=[0.5,0.5],
+                        dumpfile="aperture_1D.png",
+                        )
 
     #
     # propagation sajid
@@ -223,10 +226,17 @@ if __name__ == "__main__":
     wavefront_propagated_s, L_propagated_s = propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method=method_s)
     x_propagated_s = np.linspace(-0.5*L_propagated_s,0.5*L_propagated_s,np.shape(wavefront_propagated_s)[0])
 
-    plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,wavefront, 1e6 * x,
-                xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
-                title="propagated_with_SAJID_(%s)"%method_s)
+    # plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,wavefront, 1e6 * x,
+    #             xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
+    #             title="XWP(%s)"%method_s)
 
+    plot_intensity(
+                        wavefront_propagated_s, 1e6 * x_propagated_s,
+                        wavefront, 1e6 * x,
+                        xlabel="x [um]",ylabel="intensity [arbitrary units]",
+                        legend=["Propagated wavefield","Input wavefield"],legend_position=[0.5,0.5],
+                        dumpfile="aperture_1D.png",
+                        )
 
     #
     #plot comparison
@@ -235,4 +245,5 @@ if __name__ == "__main__":
                         wavefront_propagated, 1e6 * x_propagated,
                         xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
                         legend=["XWP(%s)"%method_s,"WOFRY(%s)"%method],legend_position=[0.5,0.5],
-                        dumpfile="aperture_1D.png")
+                        # dumpfile="aperture_1D.png"
+                        )

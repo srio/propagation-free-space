@@ -69,87 +69,49 @@ def fresnel_analytical_rectangle(
 def fresnel_analytical_circle(
     fresnel_number=None,propagation_distance=1.140,
     aperture_half=1e-3,wavelength=639e-9,
-    detector_array=None,npoints=1000,
+    detector_array=None,npoints=100,
     ):
 
 
 
-    if fresnel_number is None:
-        fresnel_number = aperture_half**2 / (wavelength * propagation_distance)
-    else:
-        fresnel_number = float(fresnel_number)
+    # if fresnel_number is None:
+    #     fresnel_number = aperture_half**2 / (wavelength * propagation_distance)
+    # else:
+    #     fresnel_number = float(fresnel_number)
+    #
+    # print("Fresnel number: ",fresnel_number)
+    #
+    #
+    #
+    # if detector_array is None:
+    #     if fresnel_number > 1.0:
+    #         window_aperture_ratio = 2.0
+    #     else:
+    #         window_aperture_ratio = 1.0 / fresnel_number
+    #     x = numpy.linspace(-window_aperture_ratio*aperture_half,window_aperture_ratio*aperture_half,npoints)
+    # else:
+    #     x = detector_array
 
-    print("Fresnel number: ",fresnel_number)
 
-
-
-    if detector_array is None:
-        if fresnel_number > 1.0:
-            window_aperture_ratio = 2.0
-        else:
-            window_aperture_ratio = 1.0 / fresnel_number
-        x = numpy.linspace(-window_aperture_ratio*aperture_half,window_aperture_ratio*aperture_half,npoints)
-    else:
-        x = detector_array
-
-
-    fresnel_number = 10.0
+    fresnel_number = 1.0
     rprime = numpy.linspace(-4,4,npoints) # x / aperture_half * numpy.sqrt(fresnel_number)
     Irprime = numpy.zeros_like(rprime)
 
-    eta = numpy.linspace(0.0,numpy.sqrt(fresnel_number),1000)
-    # print(eta)
 
     for i in range(rprime.size):
-        integrand = eta * numpy.exp(1j*numpy.pi*eta**2) * jv(0,eta*2*numpy.pi*rprime[i])
-
-        print(integrand[0:10],integrand.shape,(jv(0,eta*2*numpy.pi*rprime[i]).shape))
-        Irprime[i] = 2 * numpy.pi * integrand.sum() / eta.size
-
+        Irprime[i] = _integrate(rprime[i],fresnel_number=fresnel_number)
 
     print("Fresnel number: ",fresnel_number)
     plot(rprime,numpy.abs(Irprime)**2)
     return rprime,Irprime
 
+def _integrate(x,fresnel_number=1.0,N=10000):
+    eta = numpy.linspace(0.0,numpy.sqrt(fresnel_number),N)
+    integrand = eta * numpy.exp(1j*numpy.pi*eta**2) * jv(0,eta*2*numpy.pi*x)
+    # return integrand.sum() / eta.size
+    return numpy.trapz(integrand,eta)
+
 if __name__ == "__main__":
-
-
-    # x = numpy.linspace(-10,10,200)
-    # sa, ca = fresnel(x)
-    # plot(x,sa,x,ca,legend=['sa','ca'])
-
-    # x = numpy.linspace(0,20,200)
-    # j0 = jv(0,x)
-    # plot(x,j0)
-
-
-    #
-    #
-    #
-    # x0 = 0.0
-    # z0 = -2.507
-    # z = 1.140
-    # w = 1e-3
-    # wavelength = 639e-9
-
-    # xM = numpy.linspace(-2e-3,2e-3,1000)
-    #
-    # # step 3
-    # thetaM = numpy.arctan((x0-xM)/z0)
-    # x = xM + z * thetaM
-    #
-    # rho = - z * z0 / (z - z0) / numpy.cos(thetaM)
-    # s_plus  = numpy.sqrt( 2.0 / wavelength / rho) * (-xM + w)
-    # s_minus = numpy.sqrt( 2.0 / wavelength / rho) * (-xM - w)
-    #
-    # fs_plus,fc_plus = fresnel(s_plus)
-    # fs_minus,fc_minus = fresnel(s_minus)
-    #
-    # alpha = (1.0-1.0j)/2 * ( (fc_plus - fc_minus) + 1j*(fs_plus - fs_minus) )
-
-    # x, alpha = fresnel_analytical_rectangle(x0=0.0,z0=-2.507,z=1.140,w=1e-3,wavelength=639e-9)
-
-
 
     #
     # Input data (near field, as in sajid tests)
@@ -158,11 +120,8 @@ if __name__ == "__main__":
     wavelength = ( codata.h*codata.c/codata.e*1e9 /energy)*10**(-9)
     window_size = 5e-6
     aperture_diameter = window_size/4
-    npoints = 5000# 2048
+    npoints = 1000# 2048
     propagation_distance = 75e-6
-
-
-
 
 
     is_circular = True
@@ -191,3 +150,5 @@ if __name__ == "__main__":
         plot(x*1e6,pattern,x*1e6,source*integral_pattern/integral_source,xtitle="x [um]")
 
 
+    # tmp = _integrate(2.3,fresnel_number=1.0,N=10000)
+    # print(tmp,numpy.abs(tmp)**2)

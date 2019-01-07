@@ -101,7 +101,8 @@ def propagate_with_wofry(wavefront,x,wavelength,propagation_distance,
 # SAJID FUNCTIONS ######################################################################################################
 #
 
-def propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method="propTF"):
+def propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method="propTF",
+                         magnification_x=1.0):
 
     from xwp.spectral_1d import propTF
     from xwp.exact_1d import exact_prop,exact_prop_numba
@@ -127,7 +128,7 @@ def propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method="pro
         out_,L_out = propIR(in_wave,L_in/N,L_in,wavel,z)
     elif method == 'exact_prop_numba':
         out_ = np.zeros((N),dtype='complex128')
-        L_out = L_in.copy()
+        L_out = L_in.copy() * magnification_x
         exact_prop_numba(in_wave,out_,L_in,L_out,wavel,z)
     elif method == 'exact_prop':
         out_ = np.zeros((N),dtype='complex128')
@@ -186,13 +187,13 @@ if __name__ == "__main__":
     npoints = 2048
     propagation_distance = 75e-6
 
-
+    magnification_x = 1.0 # 0.5
     #
     # Creation of wavefront
     #
 
     x = np.linspace(-0.5*window_size,0.5*window_size,npoints)
-    wavefront = np.ones(npoints,dtype=complex)
+    wavefront = np.ones(npoints,dtype=complex) # * 3
     # apply aperture
     wavefront[np.where(np.abs(x)>(aperture_diameter/2))] = 0.0
 
@@ -203,49 +204,52 @@ if __name__ == "__main__":
     # propagation wofry
     #
     method = "integral"
-    wavefront_propagated, x_propagated = propagate_with_wofry(wavefront,x,wavelength,propagation_distance,method=method)
+    wavefront_propagated, x_propagated = propagate_with_wofry(wavefront,x,wavelength,propagation_distance,
+                                method=method,magnification_x=magnification_x)
 
     plot_intensity(
                         wavefront_propagated, 1e6 * x_propagated,
                         wavefront, 1e6 * x,
-                        xlabel="x [um]",ylabel="intensity [arbitrary units]",
+                        xlabel="x [um]",ylabel="intensity [arbitrary units]",title="wofry",
                         legend=["Propagated wavefield","Input wavefield"],legend_position=[0.5,0.5],
                         dumpfile="aperture_1D.png",
                         )
 
-    # #
-    # # propagation sajid
-    # #
     #
-    # # x = np.linspace(-0.5*window_size,0.5*window_size,npoints)
-    # # wavefront = np.ones(npoints,dtype=complex)
-    # # wavefront[np.where(np.abs(x)>(aperture_diameter/2))] = 0.0
-    # # plot_intensity(wavefront,1e6*x,xlabel="x [um]",ylabel="source intensity [arbitrary units]",title="incident wavefront")
+    # propagation sajid
     #
-    # # method_s = "propTF"
-    # # method_s = "exact_prop"
-    # method_s = "exact_prop_numba"
-    # wavefront_propagated_s, L_propagated_s = propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method=method_s)
-    # x_propagated_s = np.linspace(-0.5*L_propagated_s,0.5*L_propagated_s,np.shape(wavefront_propagated_s)[0])
+
+    # x = np.linspace(-0.5*window_size,0.5*window_size,npoints)
+    # wavefront = np.ones(npoints,dtype=complex)
+    # wavefront[np.where(np.abs(x)>(aperture_diameter/2))] = 0.0
+    # plot_intensity(wavefront,1e6*x,xlabel="x [um]",ylabel="source intensity [arbitrary units]",title="incident wavefront")
+
+    # method_s = "propTF"
+    # method_s = "exact_prop"
+    method_s = "exact_prop_numba"
+    wavefront_propagated_s, L_propagated_s = propagate_with_sajid(wavefront,x,wavelength,
+                            propagation_distance,method=method_s,
+                            magnification_x=magnification_x)
+    x_propagated_s = np.linspace(-0.5*L_propagated_s,0.5*L_propagated_s,np.shape(wavefront_propagated_s)[0])
+
+    # plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,wavefront, 1e6 * x,
+    #             xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
+    #             title="XWP(%s)"%method_s)
+
+    plot_intensity(
+                        wavefront_propagated_s, 1e6 * x_propagated_s,
+                        wavefront, 1e6 * x,
+                        xlabel="x [um]",ylabel="intensity [arbitrary units]",title="sajid",
+                        legend=["Propagated wavefield","Input wavefield"],legend_position=[0.5,0.5],
+                        dumpfile="aperture_1D.png",
+                        )
+
     #
-    # # plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,wavefront, 1e6 * x,
-    # #             xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
-    # #             title="XWP(%s)"%method_s)
+    #plot comparison
     #
-    # plot_intensity(
-    #                     wavefront_propagated_s, 1e6 * x_propagated_s,
-    #                     wavefront, 1e6 * x,
-    #                     xlabel="x [um]",ylabel="intensity [arbitrary units]",
-    #                     legend=["Propagated wavefield","Input wavefield"],legend_position=[0.5,0.5],
-    #                     dumpfile="aperture_1D.png",
-    #                     )
-    #
-    # #
-    # #plot comparison
-    # #
-    # plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,
-    #                     wavefront_propagated, 1e6 * x_propagated,
-    #                     xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
-    #                     legend=["XWP(%s)"%method_s,"WOFRY(%s)"%method],legend_position=[0.5,0.5],
-    #                     # dumpfile="aperture_1D.png"
-    #                     )
+    plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,
+                        wavefront_propagated, 1e6 * x_propagated,
+                        xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
+                        legend=["XWP(%s)"%method_s,"WOFRY(%s)"%method],legend_position=[0.5,0.5],
+                        # dumpfile="aperture_1D.png"
+                        )

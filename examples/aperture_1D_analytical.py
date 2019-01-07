@@ -95,6 +95,7 @@ def test__integrate():
 
 if __name__ == "__main__":
 
+    import matplotlib.pylab as plt
     # test__integrate()
 
     #
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     propagation_distance = 75e-6
 
 
-    detector_window = window_size / 10
+    detector_window = window_size / 50
     is_circular = False
 
     # inputs end
@@ -178,12 +179,54 @@ if __name__ == "__main__":
                         wavefront_propagated, 1e6 * x_propagated,
                         xlabel="x [um]",ylabel="intensity [arbitrary units]",
                         # legend=["Propagated wavefield","Input wavefield",],legend_position=[0.5,0.5],
-                        dumpfile="aperture_1D.png",title="wofry"
+                        dumpfile=None,title="wofry"
                         )
+
+
+    #
+    # propagation sajid
+    #
+
+    from aperture_1D import propagate_with_sajid
+
+    # x = np.linspace(-0.5*window_size,0.5*window_size,npoints)
+    # wavefront = np.ones(npoints,dtype=complex)
+    # wavefront[np.where(np.abs(x)>(aperture_diameter/2))] = 0.0
+    # plot_intensity(wavefront,1e6*x,xlabel="x [um]",ylabel="source intensity [arbitrary units]",title="incident wavefront")
+
+    # method_s = "propTF"
+    # method_s = "exact_prop"
+    method_s = "exact_prop_numba"
+    wavefront_propagated_s, L_propagated_s = propagate_with_sajid(wavefront,x1,wavelength,
+                            propagation_distance,method=method_s,
+                            magnification_x=magnification_x)
+    x_propagated_s = numpy.linspace(-0.5*L_propagated_s,0.5*L_propagated_s,numpy.shape(wavefront_propagated_s)[0])
+
+    # plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,wavefront, 1e6 * x,
+    #             xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
+    #             title="XWP(%s)"%method_s)
+
+    plot_intensity(
+                        wavefront_propagated_s, 1e6 * x_propagated_s,
+                        wavefront, 1e6 * x1,
+                        xlabel="x [um]",ylabel="intensity [arbitrary units]",title="sajid",
+                        legend=["Propagated wavefield","Input wavefield"],legend_position=[0.5,0.5],
+                        dumpfile=None,
+                        )
+
+
+    #
 
     print("magnification_x=",magnification_x)
 
 
     plot(1e6*x,pattern,
          1e6*x_propagated,numpy.abs(wavefront_propagated)**2,
-         xtitle="x [um]")
+         1e6 * x_propagated_s, numpy.abs(wavefront_propagated_s) ** 2,
+         legend=["analytical","wofry","sajid"],
+         xtitle="x [um]",show=0)
+
+    dumpfile = "aperture_1D_analytical.png"
+    plt.savefig(dumpfile)
+    print("File written to disk: %s"%dumpfile)
+    plt.show()

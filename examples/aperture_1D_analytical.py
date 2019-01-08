@@ -223,7 +223,7 @@ if __name__ == "__main__":
     plot(1e6*x,pattern,
          1e6*x_propagated,numpy.abs(wavefront_propagated)**2,
          1e6 * x_propagated_s, numpy.abs(wavefront_propagated_s) ** 2,
-         legend=["analytical","wofry","sajid"],
+         legend=["analytical","WOFRY","XWP"],
          xtitle="x [um]",show=0)
 
     dumpfile = "aperture_1D_analytical.png"

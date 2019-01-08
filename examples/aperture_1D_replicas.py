@@ -101,3 +101,26 @@ if __name__ == "__main__":
                         legend=["Propagated wavefield","Input wavefield"],legend_position=[0.5,0.8],
                         dumpfile="aperture_1D_over4.png",
                         )
+
+
+    # #
+    # # propagation sajid
+    # #
+    # method_s = "exact_prop_numba"
+    # wavefront_propagated_s, L_propagated_s = propagate_with_sajid(wavefront,x,wavelength,
+    #                         propagation_distance,method=method_s,
+    #                         magnification_x=1.0)
+    # x_propagated_s = np.linspace(-0.5*L_propagated_s,0.5*L_propagated_s,np.shape(wavefront_propagated_s)[0])
+    #
+    # # plot_intensity(wavefront_propagated_s,1e6*x_propagated_s,wavefront, 1e6 * x,
+    # #             xlabel="x [um]",ylabel="propagated intensity [arbitrary units]",
+    # #             title="XWP(%s)"%method_s)
+    #
+    # plot_intensity(
+    #                     wavefront_propagated_s, 1e6 * x_propagated_s,
+    #                     wavefront, 1e6 * x,
+    #                     xlabel="x [um]",ylabel="intensity [arbitrary units]",title="sajid",
+    #                     legend=["Propagated wavefield","Input wavefield"],legend_position=[0.5,0.5],
+    #                     dumpfile="aperture_1D_over4.png",
+    #                     )
+

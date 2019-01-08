@@ -104,6 +104,18 @@ def propagate_with_wofry(wavefront,x,wavelength,propagation_distance,
 def propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method="propTF",
                          magnification_x=1.0):
 
+    # dependencies found in installing https://github.com/s-sajid-ali/xwp
+    # pip install pyfftw
+    # pip install tqdm
+    # pip install numexpr
+    # pip install numba
+    # pip install dask
+    # pip install cython
+    # pip install toolz
+
+
+
+
     from xwp.spectral_1d import propTF
     from xwp.exact_1d import exact_prop,exact_prop_numba
 

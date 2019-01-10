@@ -109,9 +109,10 @@ if __name__ == "__main__":
     propagation_distance = 75e-6
 
 
-    detector_window = window_size / 50
+    detector_window = window_size #/20
     is_circular = False
 
+    detector_array = numpy.linspace(-0.5*detector_window,0.5*detector_window,npoints)
     # inputs end
 
     magnification_x = detector_window / window_size
@@ -132,10 +133,10 @@ if __name__ == "__main__":
         integral_pattern = pattern.sum()
         print(integral_source,integral_pattern)
 
-        plot(r*1e6,pattern,r*1e6,source*integral_pattern/integral_source,xtitle="x [um]")
+        plot(r*1e6,pattern,r*1e6,source*integral_pattern/integral_source,xtitle="x [um]",title="CIRCULAR analytical")
 
     else:
-        detector_array = numpy.linspace(-0.5*detector_window,0.5*detector_window,npoints)
+        # detector_array = numpy.linspace(-0.5*detector_window,0.5*detector_window,npoints)
         x, alpha = fresnel_analytical_rectangle(fresnel_number=None, propagation_distance=propagation_distance,
                         aperture_half=aperture_diameter/2,
                         wavelength=wavelength,
@@ -150,7 +151,7 @@ if __name__ == "__main__":
         integral_pattern = pattern.sum()
         print(integral_source,integral_pattern)
 
-        plot(x*1e6,pattern,x*1e6,source*integral_pattern/integral_source,xtitle="x [um]",title="analytical")
+        plot(x*1e6,pattern,x*1e6,source*integral_pattern/integral_source,xtitle="x [um]",title="RECTANGULAR analytical")
 
 
     #
@@ -172,8 +173,8 @@ if __name__ == "__main__":
                                                               magnification_x=magnification_x)
 
 
-    factor = (numpy.abs(wavefront_propagated)**2).mean()
-    wavefront_propagated /= numpy.sqrt(factor)
+    # factor = (numpy.abs(wavefront_propagated)**2).mean()
+    # wavefront_propagated /= numpy.sqrt(factor)
 
     plot_intensity(
                         wavefront_propagated, 1e6 * x_propagated,
@@ -224,9 +225,10 @@ if __name__ == "__main__":
          1e6*x_propagated,numpy.abs(wavefront_propagated)**2,
          1e6 * x_propagated_s, numpy.abs(wavefront_propagated_s) ** 2,
          legend=["analytical","WOFRY","XWP"],
-         xtitle="x [um]",show=0)
+         xtitle="x [um]",show=0,xrange=[-0.10,0.10])
 
-    dumpfile = "aperture_1D_analytical.png"
-    plt.savefig(dumpfile)
-    print("File written to disk: %s"%dumpfile)
+    dumpfile = None # "aperture_1D_analytical.png"
+    if dumpfile is not None:
+        plt.savefig(dumpfile)
+        print("File written to disk: %s"%dumpfile)
     plt.show()

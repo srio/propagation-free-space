@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='utf-8'?>
 <scheme description="" title="propagators_paper" version="2.0" working_directory="/users/srio/Oasys" workspace_units="1">
 	<nodes>
-		<node id="0" name="Generic Wavefront 1D" position="(120.0, 89.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.wavefront_propagation.ow_generic_wavefront_1D.OWGenericWavefront1D" title="Generic Wavefront 1D" version="" />
+		<node id="0" name="Generic Wavefront 1D" position="(121.0, 89.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.wavefront_propagation.ow_generic_wavefront_1D.OWGenericWavefront1D" title="Generic Wavefront 1D" version="" />
 		<node id="1" name="Slit 1D" position="(353.0, 89.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_slits_1d.OWWOSlit1D" title="Slit 1D" version="" />
 		<node id="2" name="Python Script" position="(829.0, 422.0)" project_name="OASYS1" qualified_name="oasys.widgets.tools.ow_python_script.OWPythonScript" title="Python Script" version="" />
-		<node id="3" name="Generic Wavefront 2D" position="(53.0, 481.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.wavefront_propagation.ow_generic_wavefront_2D.OWGenericWavefront2D" title="Generic Wavefront 2D (2)" version="" />
-		<node id="4" name="Slit" position="(312.0, 596.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_slits.OWWOSlit" title="Slit Circular" version="" />
+		<node id="3" name="Generic Wavefront 2D" position="(54.0, 481.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.wavefront_propagation.ow_generic_wavefront_2D.OWGenericWavefront2D" title="Generic Wavefront 2D (2)" version="" />
+		<node id="4" name="Slit" position="(311.0, 599.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_slits.OWWOSlit" title="Slit Circular" version="" />
 		<node id="5" name="Generic Wavefront 1D" position="(124.0, 205.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.wavefront_propagation.ow_generic_wavefront_1D.OWGenericWavefront1D" title="Generic Wavefront 1D (1)" version="" />
 		<node id="6" name="Slit 1D" position="(351.0, 207.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_slits_1d.OWWOSlit1D" title="Slit 1D (1)" version="" />
-		<node id="7" name="Screen" position="(662.0, 594.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_screen.OWWOScreen" title="Screen" version="" />
+		<node id="7" name="Screen" position="(661.0, 595.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_screen.OWWOScreen" title="Screen" version="" />
 		<node id="8" name="Slit" position="(291.0, 364.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_slits.OWWOSlit" title="Slit Rectangular" version="" />
 		<node id="9" name="Screen" position="(659.0, 361.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_screen.OWWOScreen" title="Screen (1)" version="" />
 		<node id="10" name="From Wofry Wavefront 2D" position="(534.0, 446.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.tools.ow_from_wofry_wavefront.OWFromWofryWavefront2d" title="From Wofry Wavefront 2D" version="" />
-		<node id="11" name="Screen" position="(658.0, 447.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.optical_elements.ow_srw_screen.OWSRWScreen" title="Screen (2)" version="" />
+		<node id="11" name="Screen" position="(661.0, 448.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.optical_elements.ow_srw_screen.OWSRWScreen" title="Screen (2)" version="" />
 		<node id="12" name="From Wofry Wavefront 2D" position="(541.0, 679.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.tools.ow_from_wofry_wavefront.OWFromWofryWavefront2d" title="From Wofry Wavefront 2D (1)" version="" />
 		<node id="13" name="Screen" position="(666.0, 679.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.optical_elements.ow_srw_screen.OWSRWScreen" title="Screen (2) (1)" version="" />
 		<node id="14" name="DoubleSlit" position="(317.0, 778.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_double_slit.OWWODoubleSlit" title="DoubleSlit" version="" />
@@ -28,6 +28,7 @@
 		<node id="24" name="Gaussian Source" position="(115.0, 1307.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.light_sources.ow_srw_gaussian_source.OWSRWGaussianSource" title="Gaussian Source" version="" />
 		<node id="25" name="Ideal Lens" position="(206.0, 1305.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.optical_elements.ow_srw_ideal_lens.OWSRWIdealLens" title="Ideal Lens" version="" />
 		<node id="26" name="Python Script" position="(487.0, 1200.0)" project_name="OASYS1" qualified_name="oasys.widgets.tools.ow_python_script.OWPythonScript" title="Python Script (1)" version="" />
+		<node id="27" name="SRW Python Script (SE)" position="(828.0, 850.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.native.ow_srw_python_script_se.SRWPythonScriptSE" title="SRW Python Script (SE)" version="" />
 	</nodes>
 	<links>
 		<link enabled="true" id="0" sink_channel="GenericWavefront1D" sink_node_id="1" source_channel="GenericWavefront1D" source_node_id="0" />
@@ -38,18 +39,19 @@
 		<link enabled="true" id="5" sink_channel="GenericWavefront2D" sink_node_id="8" source_channel="GenericWavefront2D" source_node_id="3" />
 		<link enabled="true" id="6" sink_channel="GenericWavefront2D" sink_node_id="10" source_channel="GenericWavefront2D" source_node_id="8" />
 		<link enabled="true" id="7" sink_channel="SRWData" sink_node_id="11" source_channel="SRWData" source_node_id="10" />
-		<link enabled="true" id="8" sink_channel="SRWData" sink_node_id="13" source_channel="SRWData" source_node_id="12" />
-		<link enabled="false" id="9" sink_channel="GenericWavefront2D" sink_node_id="12" source_channel="GenericWavefront2D" source_node_id="4" />
-		<link enabled="true" id="10" sink_channel="GenericWavefront2D" sink_node_id="15" source_channel="GenericWavefront2D" source_node_id="14" />
-		<link enabled="true" id="11" sink_channel="GenericWavefront2D" sink_node_id="14" source_channel="GenericWavefront2D" source_node_id="16" />
-		<link enabled="true" id="12" sink_channel="SRWData" sink_node_id="18" source_channel="SRWData" source_node_id="17" />
-		<link enabled="true" id="13" sink_channel="GenericWavefront2D" sink_node_id="17" source_channel="GenericWavefront2D" source_node_id="14" />
-		<link enabled="true" id="14" sink_channel="GenericWavefront1D" sink_node_id="19" source_channel="GenericWavefront1D" source_node_id="1" />
-		<link enabled="true" id="15" sink_channel="GenericWavefront2D" sink_node_id="21" source_channel="GenericWavefront2D" source_node_id="20" />
-		<link enabled="true" id="16" sink_channel="GenericWavefront2D" sink_node_id="22" source_channel="GenericWavefront2D" source_node_id="20" />
-		<link enabled="true" id="17" sink_channel="SRWData" sink_node_id="25" source_channel="SRWData" source_node_id="24" />
-		<link enabled="true" id="18" sink_channel="SRWData" sink_node_id="23" source_channel="out_object" source_node_id="26" />
-		<link enabled="true" id="19" sink_channel="in_object_1" sink_node_id="26" source_channel="SRWData" source_node_id="22" />
+		<link enabled="true" id="8" sink_channel="GenericWavefront2D" sink_node_id="12" source_channel="GenericWavefront2D" source_node_id="4" />
+		<link enabled="true" id="9" sink_channel="GenericWavefront2D" sink_node_id="15" source_channel="GenericWavefront2D" source_node_id="14" />
+		<link enabled="true" id="10" sink_channel="GenericWavefront2D" sink_node_id="14" source_channel="GenericWavefront2D" source_node_id="16" />
+		<link enabled="true" id="11" sink_channel="GenericWavefront2D" sink_node_id="17" source_channel="GenericWavefront2D" source_node_id="14" />
+		<link enabled="true" id="12" sink_channel="GenericWavefront1D" sink_node_id="19" source_channel="GenericWavefront1D" source_node_id="1" />
+		<link enabled="true" id="13" sink_channel="GenericWavefront2D" sink_node_id="21" source_channel="GenericWavefront2D" source_node_id="20" />
+		<link enabled="true" id="14" sink_channel="GenericWavefront2D" sink_node_id="22" source_channel="GenericWavefront2D" source_node_id="20" />
+		<link enabled="true" id="15" sink_channel="SRWData" sink_node_id="25" source_channel="SRWData" source_node_id="24" />
+		<link enabled="true" id="16" sink_channel="SRWData" sink_node_id="23" source_channel="out_object" source_node_id="26" />
+		<link enabled="true" id="17" sink_channel="in_object_1" sink_node_id="26" source_channel="SRWData" source_node_id="22" />
+		<link enabled="true" id="18" sink_channel="SRWData" sink_node_id="18" source_channel="SRWData" source_node_id="17" />
+		<link enabled="false" id="19" sink_channel="SRWData" sink_node_id="27" source_channel="SRWData" source_node_id="13" />
+		<link enabled="true" id="20" sink_channel="SRWData" sink_node_id="13" source_channel="SRWData" source_node_id="12" />
 	</links>
 	<annotations>
 		<text font-family="Helvetica" font-size="16" id="0" rect="(91.0, 9.0, 150.0, 24.0)">Fig 1D</text>
@@ -70,7 +72,7 @@ DAAAAGtpbmRfb2Zfd2F2ZXEPSwBYEAAAAG51bWJlcl9vZl9wb2ludHNxEE0ACFgFAAAAcGhhc2Vx
 EUcAAAAAAAAAAFgGAAAAcmFkaXVzcRJHQGGAAAAAAABYCgAAAHJhbmdlX2Zyb21xE0e+xPi1iONo
 8VgIAAAAcmFuZ2VfdG9xFEc+xPi1iONo8VgTAAAAc2F2ZWRXaWRnZXRHZW9tZXRyeXEVY3NpcApf
 dW5waWNrbGVfdHlwZQpxFlgMAAAAUHlRdDUuUXRDb3JlcRdYCgAAAFFCeXRlQXJyYXlxGEMyAdnQ
-ywACAAAAAAA8AAAAOgAABWMAAAMQAAAAPAAAAFAAAAVjAAADEAAAAAAAAAAABaBxGYVxGodxG1Jx
+ywACAAAAAACTAAAAoAAABboAAAN8AAAAkwAAALwAAAW6AAADfAAAAAAAAAAABpBxGYVxGodxG1Jx
 HFgLAAAAc3RlcHNfc3RhcnRxHUe/QGJN0vGp/FgKAAAAc3RlcHNfc3RlcHEeRz6wxvegte2NWAUA
 AAB1bml0c3EfSwBYCQAAAHZpZXdfdHlwZXEgSwFYCgAAAHdhdmVsZW5ndGhxIUc923zf2de9u3Uu
 </properties>
@@ -106,8 +108,8 @@ Dk0ACFgSAAAAbnVtYmVyX29mX3BvaW50c192cQ9NAAhYBQAAAHBoYXNlcRBHAAAAAAAAAABYBgAA
 AHJhZGl1c3ERR7+EeuFHrhR7WAwAAAByYW5nZV9mcm9tX2hxEke+xPi1iONo8VgMAAAAcmFuZ2Vf
 ZnJvbV92cRNHvsT4tYjjaPFYCgAAAHJhbmdlX3RvX2hxFEc+xPi1iONo8VgKAAAAcmFuZ2VfdG9f
 dnEVRz7E+LWI42jxWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cRZjc2lwCl91bnBpY2tsZV90eXBl
-CnEXWAwAAABQeVF0NS5RdENvcmVxGFgKAAAAUUJ5dGVBcnJheXEZQzIB2dDLAAIAAAAAAEgAAAAY
-AAAFbwAAAvQAAABIAAAANAAABW8AAAL0AAAAAAAAAAAGkHEahXEbh3EcUnEdWA0AAABzdGVwc19z
+CnEXWAwAAABQeVF0NS5RdENvcmVxGFgKAAAAUUJ5dGVBcnJheXEZQzIB2dDLAAIAAAAAB/YAAAA7
+AAANHQAAAxcAAAf2AAAAVwAADR0AAAMXAAAAAQAAAAAGkHEahXEbh3EcUnEdWA0AAABzdGVwc19z
 dGFydF9ocR5Hv0BiTdLxqfxYDQAAAHN0ZXBzX3N0YXJ0X3ZxH0e/QGJN0vGp/FgMAAAAc3RlcHNf
 c3RlcF9ocSBHPrDG96C17Y1YDAAAAHN0ZXBzX3N0ZXBfdnEhRz6wxvegte2NWAUAAAB1bml0c3Ei
 SwBYCQAAAHZpZXdfdHlwZXEjSwFYCgAAAHdhdmVsZW5ndGhxJEc923zf2de9u3Uu
@@ -118,9 +120,9 @@ AAAAAAAAAABYEwAAAGNhbGN1bGF0ZV9ncmlkX29ubHlxA0sBWAYAAABoZWlnaHRxBEc+tPi1iONo
 aW9ucQaIWA8AAABtYWduaWZpY2F0aW9uX3hxB0c/8AAAAAAAAFgPAAAAbWFnbmlmaWNhdGlvbl95
 cQhHP/AAAAAAAABYBgAAAG1hal9heHEJRwAAAAAAAAAAWAYAAABtaW5fYXhxCkcAAAAAAAAAAFgH
 AAAAb2VfbmFtZXELWAAAAABxDFgBAAAAcHENRwAAAAAAAAAAWAoAAABwcm9wYWdhdG9ycQ5LBFgB
-AAAAcXEPRwAAAAAAAAAAWAYAAAByYWRpdXNxEEc+tPi1iONo8VgTAAAAc2F2ZWRXaWRnZXRHZW9t
+AAAAcXEPRwAAAAAAAAAAWAYAAAByYWRpdXNxEEc+pPi1iONo8VgTAAAAc2F2ZWRXaWRnZXRHZW9t
 ZXRyeXERY3NpcApfdW5waWNrbGVfdHlwZQpxElgMAAAAUHlRdDUuUXRDb3JlcRNYCgAAAFFCeXRl
-QXJyYXlxFEMyAdnQywACAAAAAABIAAAAGAAABW8AAAL0AAAASAAAADQAAAVvAAAC9AAAAAAAAAAA
+QXJyYXlxFEMyAdnQywACAAAAAAemAAAAGAAADM0AAAL0AAAHpgAAADQAAAzNAAAC9AAAAAEAAAAA
 BpBxFYVxFodxF1JxGFgFAAAAc2hhcGVxGUsBWBAAAABzaGlmdF9oYWxmX3BpeGVscRpLAVgQAAAA
 c2h1ZmZsZV9pbnRlcnZhbHEbSwBYDQAAAHN1cmZhY2Vfc2hhcGVxHEsAWA4AAAB2ZXJ0aWNhbF9z
 aGlmdHEdRwAAAAAAAAAAWAkAAAB2aWV3X3R5cGVxHksBWAUAAAB3aWR0aHEfRz60+LWI42jxdS4=
@@ -159,7 +161,7 @@ aW9ucQaIWA8AAABtYWduaWZpY2F0aW9uX3hxB0c/8AAAAAAAAFgPAAAAbWFnbmlmaWNhdGlvbl95
 cQhHP/AAAAAAAABYBwAAAG9lX25hbWVxCVgAAAAAcQpYAQAAAHBxC0c/E6kqMFUyYVgKAAAAcHJv
 cGFnYXRvcnEMSwRYAQAAAHFxDUcAAAAAAAAAAFgTAAAAc2F2ZWRXaWRnZXRHZW9tZXRyeXEOY3Np
 cApfdW5waWNrbGVfdHlwZQpxD1gMAAAAUHlRdDUuUXRDb3JlcRBYCgAAAFFCeXRlQXJyYXlxEUMy
-AdnQywACAAAAAACTAAAAoAAABboAAAN8AAAAkwAAALwAAAW6AAADfAAAAAAAAAAABpBxEoVxE4dx
+AdnQywACAAAAAAc6AAAAbQAADGEAAANJAAAHOgAAAIkAAAxhAAADSQAAAAEAAAAABpBxEoVxE4dx
 FFJxFVgFAAAAc2hhcGVxFksAWBAAAABzaGlmdF9oYWxmX3BpeGVscRdLAVgQAAAAc2h1ZmZsZV9p
 bnRlcnZhbHEYSwBYDQAAAHN1cmZhY2Vfc2hhcGVxGUsAWA4AAAB2ZXJ0aWNhbF9zaGlmdHEaRwAA
 AAAAAAAAWAkAAAB2aWV3X3R5cGVxG0sBWAUAAAB3aWR0aHEcRwAAAAAAAAAAdS4=
@@ -172,7 +174,7 @@ cQhHP/AAAAAAAABYBgAAAG1hal9heHEJRwAAAAAAAAAAWAYAAABtaW5fYXhxCkcAAAAAAAAAAFgH
 AAAAb2VfbmFtZXELWAAAAABxDFgBAAAAcHENRwAAAAAAAAAAWAoAAABwcm9wYWdhdG9ycQ5LBFgB
 AAAAcXEPRwAAAAAAAAAAWAYAAAByYWRpdXNxEEc+tPi1iONo8VgTAAAAc2F2ZWRXaWRnZXRHZW9t
 ZXRyeXERY3NpcApfdW5waWNrbGVfdHlwZQpxElgMAAAAUHlRdDUuUXRDb3JlcRNYCgAAAFFCeXRl
-QXJyYXlxFEMyAdnQywACAAAAAABIAAAAGAAABW8AAAL0AAAASAAAADQAAAVvAAAC9AAAAAAAAAAA
+QXJyYXlxFEMyAdnQywACAAAAAAcrAAAAcgAADFIAAANOAAAHKwAAAI4AAAxSAAADTgAAAAEAAAAA
 BpBxFYVxFodxF1JxGFgFAAAAc2hhcGVxGUsAWBAAAABzaGlmdF9oYWxmX3BpeGVscRpLAVgQAAAA
 c2h1ZmZsZV9pbnRlcnZhbHEbSwBYDQAAAHN1cmZhY2Vfc2hhcGVxHEsAWA4AAAB2ZXJ0aWNhbF9z
 aGlmdHEdRwAAAAAAAAAAWAkAAAB2aWV3X3R5cGVxHksBWAUAAAB3aWR0aHEfRz60+LWI42jxdS4=
@@ -558,7 +560,7 @@ YW5nZV95X21heHE+SzJYCwAAAHJhbmdlX3lfbWlucT9Kzv///1gTAAAAc2F2ZWRXaWRnZXRHZW9t
 ZXRyeXFAY3NpcApfdW5waWNrbGVfdHlwZQpxQVgMAAAAUHlRdDUuUXRDb3JlcUJYCgAAAFFCeXRl
 QXJyYXlxQ0MyAdnQywACAAAAAAcDAAAAoQAADCoAAAN4AAAHAwAAAL0AAAwqAAADeAAAAAEAAAAA
 BpBxRIVxRYdxRlJxR1gFAAAAc2hhcGVxSEsAWA0AAABzdXJmYWNlX3NoYXBlcUlLAFgJAAAAdXNl
-X3JhbmdlcUpLAFgJAAAAdmlld190eXBlcUtLAXUu
+X3JhbmdlcUpLAFgJAAAAdmlld190eXBlcUtLAHUu
 </properties>
 		<properties format="pickle" node_id="24">gAN9cQAoWBgAAABhdmVyYWdlX2FuZ2xlX2F0X3dhaXN0X3hxAUcAAAAAAAAAAFgYAAAAYXZlcmFn
 ZV9hbmdsZV9hdF93YWlzdF95cQJHAAAAAAAAAABYFgAAAGJlYW1fY2VudGVyX2F0X3dhaXN0X3hx
@@ -661,6 +663,10 @@ AFgIAAAAZmlsZW5hbWVxDk51YmFYEwAAAHNhdmVkV2lkZ2V0R2VvbWV0cnlxD2NzaXAKX3VucGlj
 a2xlX3R5cGUKcRBYDAAAAFB5UXQ1LlF0Q29yZXERWAoAAABRQnl0ZUFycmF5cRJDMgHZ0MsAAgAA
 AAABVwAAAQkAAAR2AAADfAAAAVcAAAElAAAEdgAAA3wAAAAAAAAAAAaQcROFcRSHcRVScRZYDQAA
 AHNwbGl0dGVyU3RhdGVxF051Lg==
+</properties>
+		<properties format="pickle" node_id="27">gAN9cQBYEwAAAHNhdmVkV2lkZ2V0R2VvbWV0cnlxAWNzaXAKX3VucGlja2xlX3R5cGUKcQJYDAAA
+AFB5UXQ1LlF0Q29yZXEDWAoAAABRQnl0ZUFycmF5cQRDMgHZ0MsAAgAAAAAILQAAADUAAAviAAAC
+2gAACC0AAABRAAAL4gAAAtoAAAABAAAAAAaQcQWFcQaHcQdScQhzLg==
 </properties>
 	</node_properties>
 </scheme>

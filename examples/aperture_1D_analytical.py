@@ -12,9 +12,13 @@ def fresnel_analytical_rectangle(
     fresnel_number=None,propagation_distance=1.140,
     aperture_half=1e-3,wavelength=639e-9,
     detector_array=None,npoints=1000,
+    x0=0.0, radius=None, # for spherical wave, see https://pdfs.semanticscholar.org/d112/0da88e98e430a397612f98f7c5bed90fc1d0.pdf
     ):
 
     # see Goldman "Fourier Optics" 4th edition, section 4.5.1
+    if radius is None:
+        if fresnel_number is not None:
+            raise Exception("For spherical wave, please define the propagation distance!!")
 
     if fresnel_number is None:
         fresnel_number = aperture_half**2 / (wavelength * propagation_distance)
@@ -31,6 +35,17 @@ def fresnel_analytical_rectangle(
     else:
         x = detector_array
 
+    # in case of spherical wave, redefine fresnel number using rho_prime instead of z
+    # see https://pdfs.semanticscholar.org/d112/0da88e98e430a397612f98f7c5bed90fc1d0.pdf
+    if radius is not None:
+        raise Exception("To be implemented!")
+        # z0 = -radius
+        # xM = x / (1.0 + propagation_distance / z0)
+        # thetaM = numpy.arctan( (x0-xM) / z0 )
+        # rho_prime = -propagation_distance * z0 / (propagation_distance - z0) / numpy.cos(thetaM)
+        # fresnel_number = aperture_half**2 / (wavelength * rho_prime)
+
+
     s_plus  = numpy.sqrt(2.0 * fresnel_number) * ( 1.0 + x / aperture_half)
     s_minus = numpy.sqrt(2.0 * fresnel_number) * ( 1.0 - x / aperture_half)
 
@@ -39,6 +54,8 @@ def fresnel_analytical_rectangle(
 
     Ix = (fc_minus + fc_plus) + 1j*(fs_minus + fs_plus)
     Ix *= 1.0/numpy.sqrt(2.0)
+
+    print(Ix)
 
     return x,Ix
 

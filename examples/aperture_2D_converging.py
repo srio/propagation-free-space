@@ -1,4 +1,4 @@
-def run_wofry():
+def run_wofry(input_wavefront):
     #
     # ===== Example of python code to create propagate current element =====
     #
@@ -12,16 +12,7 @@ def run_wofry():
     from syned.beamline.element_coordinates import ElementCoordinates
     from wofry.propagator.propagators2D.fresnel_zoom_xy import FresnelZoomXY2D
 
-    #
-    # create input_wavefront
-    #
-    #
-    from wofry.propagator.wavefront2D.generic_wavefront import GenericWavefront2D
-    input_wavefront = GenericWavefront2D.initialize_wavefront_from_range(x_min=-0.000050, x_max=0.000050,
-                                                                         y_min=-0.000050, y_max=0.000050,
-                                                                         number_of_points=(2048, 2048))
-    input_wavefront.set_photon_energy(10000)
-    input_wavefront.set_spherical_wave(radius=-0.1, complex_amplitude=complex(1, 0))
+
 
     #
     # info on current oe
@@ -64,7 +55,7 @@ def run_wofry():
     output_wavefront = propagator.do_propagation(propagation_parameters=propagation_parameters,
                                                  handler_name='FRESNEL_ZOOM_XY_2D')
 
-    return input_wavefront,output_wavefront
+    return output_wavefront
 
 def run_srw(w0,Rx=-0.1,dRx=0.001,Ry=-0.1,dRy=0.001):
     from orangecontrib.srw.util.srw_objects import SRWData
@@ -117,30 +108,70 @@ def run_srw_native(wfr,do_plot=False):
 
     return wfr
 
+def run_analytical(w0,detector_array=None):
+    from aperture_1D_analytical import fresnel_analytical_rectangle
+
+    propagation_distance=0.100000
+    R = -0.1
+    x, Ix = fresnel_analytical_rectangle(
+        fresnel_number=None,propagation_distance=propagation_distance,
+        aperture_half=w0.get_coordinate_x()[-1],wavelength=w0.get_wavelength(),
+        detector_array=detector_array,npoints=1000,
+        x0=0,radius=R,
+        )
+
+    return x,Ix
+
+
 if __name__ == "__main__":
 
     from srxraylib.plot.gol import plot_image, plot
     import matplotlib.pylab as plt
 
     dumpfile="aperture_2D_converging.png"
-    w0, w = run_wofry()
 
 
-    # plot_image(w.get_intensity(),1e6*w.get_coordinate_x(),1e6*w.get_coordinate_y())
+    #
+    # create input_wavefront
+    #
+    #
+    from wofry.propagator.wavefront2D.generic_wavefront import GenericWavefront2D
+    w0 = GenericWavefront2D.initialize_wavefront_from_range(x_min=-0.000050, x_max=0.000050,
+                                                                         y_min=-0.000050, y_max=0.000050,
+                                                                         number_of_points=(2048, 2048))
+    w0.set_photon_energy(10000)
+    w0.set_spherical_wave(radius=-0.1, complex_amplitude=complex(1, 0))
+
+    # plot_image(w0.get_intensity(),1e6*w0.get_coordinate_x(),1e6*w0.get_coordinate_y(),title="Source")
+
+    #
+    # wofry
+    #
+
+    w = run_wofry(w0)
+
+
+    # plot_image(w.get_intensity(),1e6*w.get_coordinate_x(),1e6*w.get_coordinate_y(),title="Wofry")
     # plot(1e6*w.get_coordinate_x(),w.get_intensity()[:,w.get_coordinate_y().size//2],
     #      1e6*w.get_coordinate_y(),w.get_intensity()[w.get_coordinate_x().size // 2,:],)
 
+    #
+    # srw
+    #
     w1 = run_srw(w0)
 
     # plot_image(w1.get_intensity(),1e6*w1.get_coordinate_x(),1e6*w1.get_coordinate_y(),title="SRW")
-    plot(1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
+    plot(
+         1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
          1e6 * w.get_coordinate_x(), w.get_intensity()[:, w.get_coordinate_y().size // 2],
-         legend=["SRW","WOFRY"],xtitle="x[um]",ytitle="Intensity [a.u.]",show=False,ylog=False)
+         legend=["SRW","WOFRY"],
+         xtitle="x[um]",ytitle="Intensity [a.u.]",show=False,ylog=False)
 
     if dumpfile is not None:
         plt.savefig(dumpfile)
         print("File written to disk: %s"%dumpfile)
     plt.show()
 
-
-    print("Size SRW,WOFRY: ",w1.get_coordinate_x().size,w.get_coordinate_x().size)
+    # x,Ix = run_analytical(w0,detector_array=w0.get_coordinate_x())
+    # plot(1e6*x,Ix)
+    # print("Size SRW,WOFRY: ",w1.get_coordinate_x().size,w.get_coordinate_x().size)

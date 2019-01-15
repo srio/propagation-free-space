@@ -29,6 +29,8 @@
 		<node id="25" name="Ideal Lens" position="(206.0, 1305.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.optical_elements.ow_srw_ideal_lens.OWSRWIdealLens" title="Ideal Lens" version="" />
 		<node id="26" name="Python Script" position="(487.0, 1200.0)" project_name="OASYS1" qualified_name="oasys.widgets.tools.ow_python_script.OWPythonScript" title="Python Script (1)" version="" />
 		<node id="27" name="SRW Python Script (SE)" position="(828.0, 850.0)" project_name="OASYS1-SRW" qualified_name="orangecontrib.srw.widgets.native.ow_srw_python_script_se.SRWPythonScriptSE" title="SRW Python Script (SE)" version="" />
+		<node id="28" name="Wavefront 2D to 1D" position="(297.0, 1026.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.tools.ow_2D_to_1D.OW2Dto1D" title="Wavefront 2D to 1D" version="" />
+		<node id="29" name="Screen 1D" position="(438.0, 1025.0)" project_name="OASYS1-WOFRY" qualified_name="orangecontrib.wofry.widgets.beamline_elements.ow_screen_1d.OWWOScreen1D" title="Screen 1D" version="" />
 	</nodes>
 	<links>
 		<link enabled="true" id="0" sink_channel="GenericWavefront1D" sink_node_id="1" source_channel="GenericWavefront1D" source_node_id="0" />
@@ -45,13 +47,15 @@
 		<link enabled="true" id="11" sink_channel="GenericWavefront2D" sink_node_id="17" source_channel="GenericWavefront2D" source_node_id="14" />
 		<link enabled="true" id="12" sink_channel="GenericWavefront1D" sink_node_id="19" source_channel="GenericWavefront1D" source_node_id="1" />
 		<link enabled="true" id="13" sink_channel="GenericWavefront2D" sink_node_id="21" source_channel="GenericWavefront2D" source_node_id="20" />
-		<link enabled="true" id="14" sink_channel="GenericWavefront2D" sink_node_id="22" source_channel="GenericWavefront2D" source_node_id="20" />
+		<link enabled="false" id="14" sink_channel="GenericWavefront2D" sink_node_id="22" source_channel="GenericWavefront2D" source_node_id="20" />
 		<link enabled="true" id="15" sink_channel="SRWData" sink_node_id="25" source_channel="SRWData" source_node_id="24" />
 		<link enabled="true" id="16" sink_channel="SRWData" sink_node_id="23" source_channel="out_object" source_node_id="26" />
 		<link enabled="true" id="17" sink_channel="in_object_1" sink_node_id="26" source_channel="SRWData" source_node_id="22" />
 		<link enabled="true" id="18" sink_channel="SRWData" sink_node_id="18" source_channel="SRWData" source_node_id="17" />
 		<link enabled="false" id="19" sink_channel="SRWData" sink_node_id="27" source_channel="SRWData" source_node_id="13" />
 		<link enabled="true" id="20" sink_channel="SRWData" sink_node_id="13" source_channel="SRWData" source_node_id="12" />
+		<link enabled="true" id="21" sink_channel="GenericWavefront2D" sink_node_id="28" source_channel="GenericWavefront2D" source_node_id="20" />
+		<link enabled="true" id="22" sink_channel="GenericWavefront1D" sink_node_id="29" source_channel="GenericWavefront1D" source_node_id="28" />
 	</links>
 	<annotations>
 		<text font-family="Helvetica" font-size="16" id="0" rect="(91.0, 9.0, 150.0, 24.0)">Fig 1D</text>
@@ -481,7 +485,7 @@ AAAAAAAAAABYEwAAAGNhbGN1bGF0ZV9ncmlkX29ubHlxA0sBWAYAAABoZWlnaHRxBEcAAAAAAAAA
 AFgQAAAAaG9yaXpvbnRhbF9zaGlmdHEFRwAAAAAAAAAAWBYAAABpc19hdXRvbWF0aWNfZXhlY3V0
 aW9ucQaIWA8AAABtYWduaWZpY2F0aW9uX3hxB0c/hHrhR64Ue1gPAAAAbWFnbmlmaWNhdGlvbl95
 cQhHP4R64UeuFHtYBwAAAG9lX25hbWVxCVgAAAAAcQpYAQAAAHBxC0cAAAAAAAAAAFgKAAAAcHJv
-cGFnYXRvcnEMSwBYAQAAAHFxDUc/uZmZmZmZmlgTAAAAc2F2ZWRXaWRnZXRHZW9tZXRyeXEOY3Np
+cGFnYXRvcnEMSwRYAQAAAHFxDUc/uZmZmZmZmlgTAAAAc2F2ZWRXaWRnZXRHZW9tZXRyeXEOY3Np
 cApfdW5waWNrbGVfdHlwZQpxD1gMAAAAUHlRdDUuUXRDb3JlcRBYCgAAAFFCeXRlQXJyYXlxEUMy
 AdnQywACAAAAAAccAAAAhAAADEMAAANgAAAHHAAAAKAAAAxDAAADYAAAAAEAAAAABpBxEoVxE4dx
 FFJxFVgFAAAAc2hhcGVxFksAWBAAAABzaGlmdF9oYWxmX3BpeGVscRdLAVgQAAAAc2h1ZmZsZV9p
@@ -667,6 +671,23 @@ AHNwbGl0dGVyU3RhdGVxF051Lg==
 		<properties format="pickle" node_id="27">gAN9cQBYEwAAAHNhdmVkV2lkZ2V0R2VvbWV0cnlxAWNzaXAKX3VucGlja2xlX3R5cGUKcQJYDAAA
 AFB5UXQ1LlF0Q29yZXEDWAoAAABRQnl0ZUFycmF5cQRDMgHZ0MsAAgAAAAAILQAAADUAAAviAAAC
 2gAACC0AAABRAAAL4gAAAtoAAAABAAAAAAaQcQWFcQaHcQdScQhzLg==
+</properties>
+		<properties format="pickle" node_id="28">gAN9cQAoWBYAAABpc19hdXRvbWF0aWNfZXhlY3V0aW9ucQGIWBMAAABzYXZlZFdpZGdldEdlb21l
+dHJ5cQJjc2lwCl91bnBpY2tsZV90eXBlCnEDWAwAAABQeVF0NS5RdENvcmVxBFgKAAAAUUJ5dGVB
+cnJheXEFQzIB2dDLAAIAAAAAAFEAAAAzAAAFeAAAAw8AAABRAAAATwAABXgAAAMPAAAAAAAAAAAG
+kHEGhXEHh3EIUnEJWAwAAABzZWN0aW9uX2F4aXNxCksAWBIAAABzZWN0aW9uX2Nvb3JkaW5hdGVx
+C0cAAAAAAAAAAFgJAAAAdmlld190eXBlcQxLAXUu
+</properties>
+		<properties format="pickle" node_id="29">gAN9cQAoWA8AAABhbmdsZV9hemltdXRoYWxxAUcAAAAAAAAAAFgMAAAAYW5nbGVfcmFkaWFscQJH
+AAAAAAAAAABYFgAAAGlzX2F1dG9tYXRpY19leGVjdXRpb25xA4hYDwAAAG1hZ25pZmljYXRpb25f
+TnEERz/wAAAAAAAAWA8AAABtYWduaWZpY2F0aW9uX3hxBUc/hHrhR64Ue1gHAAAAb2VfbmFtZXEG
+WAAAAABxB1gBAAAAcHEIRwAAAAAAAAAAWAoAAABwcm9wYWdhdG9ycQlLBVgBAAAAcXEKRz+5mZmZ
+mZmaWBMAAABzYXZlZFdpZGdldEdlb21ldHJ5cQtjc2lwCl91bnBpY2tsZV90eXBlCnEMWAwAAABQ
+eVF0NS5RdENvcmVxDVgKAAAAUUJ5dGVBcnJheXEOQzIB2dDLAAIAAAAAAewAAAByAAAHEwAAA04A
+AAHsAAAAjgAABxMAAANOAAAAAAAAAAAGkHEPhXEQh3ERUnESWAgAAABzY2FsZWRfTnETS2RYCAAA
+AHNjYWxlZF9ScRRHP7mZmZmZmZpYCwAAAHNjYWxlZF9SbWF4cRVHQFkAAAAAAABYDgAAAHNjYWxl
+ZF9ndWVzc19ScRZLAFgFAAAAc2hhcGVxF0sAWA0AAABzdXJmYWNlX3NoYXBlcRhLAFgJAAAAdmll
+d190eXBlcRlLAXUu
 </properties>
 	</node_properties>
 </scheme>

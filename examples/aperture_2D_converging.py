@@ -1,3 +1,5 @@
+import numpy
+
 def run_wofry(input_wavefront):
     #
     # ===== Example of python code to create propagate current element =====
@@ -79,7 +81,7 @@ def run_srw_native(wfr,do_plot=False):
     srw_pp_array = []
 
     drift_after_oe_0 = SRWLOptD(0.1)
-    pp_drift_after_oe_0 = [0, 0, 1.0, 1, 0, 1.0, 1.0, 1.0, 1.0, 0, 0.0, 0.0]
+    pp_drift_after_oe_0 = [0, 0, 1.0, 1, 0, 1.0, 1.0, 1.0, 1.0, 0, 0.0, 0.0]  # quadratic
 
     srw_oe_array.append(drift_after_oe_0)
     srw_pp_array.append(pp_drift_after_oe_0)
@@ -108,17 +110,21 @@ def run_srw_native(wfr,do_plot=False):
 
     return wfr
 
-def run_analytical(w0,detector_array=None):
-    from aperture_1D_analytical import fresnel_analytical_rectangle
+def sinc(x):
+    return numpy.sin(x) / x
 
-    propagation_distance=0.100000
-    R = -0.1
-    x, Ix = fresnel_analytical_rectangle(
-        fresnel_number=None,propagation_distance=propagation_distance,
-        aperture_half=w0.get_coordinate_x()[-1],wavelength=w0.get_wavelength(),
-        detector_array=detector_array,npoints=1000,
-        x0=0,radius=R,
-        )
+def sinc2(x):
+    return sinc(x)**2
+
+def run_analytical(w0,detector_array=None):
+
+    F = 0.100000
+    D = w0.get_coordinate_x()[-1] - w0.get_coordinate_x()[0]
+    print("D = ",D)
+    x = detector_array
+    k = w0.get_wavenumber()
+    arg =  k * x * D / F / 2
+    Ix =  (2 * k * D**2 / numpy.pi / F )**2 * sinc2(arg)
 
     return x,Ix
 
@@ -161,17 +167,35 @@ if __name__ == "__main__":
     w1 = run_srw(w0)
 
     # plot_image(w1.get_intensity(),1e6*w1.get_coordinate_x(),1e6*w1.get_coordinate_y(),title="SRW")
+
+
+    #
+    # analytical
+    #
+
+    x,Ix = run_analytical(w0,detector_array=w1.get_coordinate_x())
+    plot(1e6*x,Ix)
+    Inor = (w.get_intensity()[:, w.get_coordinate_y().size // 2]).max() / Ix.max()
+
+    #
+    # plot all
+    #
+
     plot(
          1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
          1e6 * w.get_coordinate_x(), w.get_intensity()[:, w.get_coordinate_y().size // 2],
-         legend=["SRW","WOFRY"],
-         xtitle="x[um]",ytitle="Intensity [a.u.]",show=False,ylog=False)
+         1e6*x,Ix*Inor,
+         # legend=["WOFRY","analytical"],
+         legend=["SRW (quadratic)","WOFRY (zoom)","analytical"],
+         xrange=[-1.0,1.0],yrange=[1e-1,1e6],
+         xtitle="x[um]",ytitle="Intensity [a.u.]",show=False,ylog=True)
 
+    print("integral analytical: %g, wofry: %g ratio: %f"%(Ix.sum() , w.get_intensity().sum(), Ix.sum() / w.get_intensity().sum() ))
+    print("max analytical: %g, wofry: %g ratio: %f"%(Ix.max() , w.get_intensity().max(), Ix.max() / w.get_intensity().max() ))
     if dumpfile is not None:
         plt.savefig(dumpfile)
         print("File written to disk: %s"%dumpfile)
     plt.show()
 
-    # x,Ix = run_analytical(w0,detector_array=w0.get_coordinate_x())
-    # plot(1e6*x,Ix)
+
     # print("Size SRW,WOFRY: ",w1.get_coordinate_x().size,w.get_coordinate_x().size)

@@ -135,20 +135,25 @@ if __name__ == "__main__":
     import matplotlib.pylab as plt
 
     dumpfile="aperture_2D_converging.png"
-
+    npixels= 2048
+    D = 100e-6
+    radius = -0.1
+    photon_energy = 10000.0
 
     #
     # create input_wavefront
     #
     #
     from wofry.propagator.wavefront2D.generic_wavefront import GenericWavefront2D
-    w0 = GenericWavefront2D.initialize_wavefront_from_range(x_min=-0.000050, x_max=0.000050,
-                                                                         y_min=-0.000050, y_max=0.000050,
-                                                                         number_of_points=(2048, 2048))
-    w0.set_photon_energy(10000)
-    w0.set_spherical_wave(radius=-0.1, complex_amplitude=complex(1, 0))
+    w0 = GenericWavefront2D.initialize_wavefront_from_range(x_min=-0.5*D, x_max=0.5*D,
+                                                                         y_min=-0.5*D, y_max=0.5*D,
+                                                                         number_of_points=(npixels, npixels))
+    w0.set_photon_energy(photon_energy)
+    w0.set_spherical_wave(radius=radius, complex_amplitude=complex(1, 0))
 
     # plot_image(w0.get_intensity(),1e6*w0.get_coordinate_x(),1e6*w0.get_coordinate_y(),title="Source")
+    print("Validity condition R >? N delta**2 / lambda: %f >? %g "%(0.010, npixels * (D/npixels)**2 / w0.get_wavelength() ))
+
 
     #
     # wofry
@@ -174,7 +179,7 @@ if __name__ == "__main__":
     #
 
     x,Ix = run_analytical(w0,detector_array=w1.get_coordinate_x())
-    plot(1e6*x,Ix)
+    # plot(1e6*x,Ix)
     Inor = (w.get_intensity()[:, w.get_coordinate_y().size // 2]).max() / Ix.max()
 
     #
@@ -197,5 +202,6 @@ if __name__ == "__main__":
         print("File written to disk: %s"%dumpfile)
     plt.show()
 
+    print("Validity condition R >? N delta**2 / lambda: %f >? %g "%(0.010, 2048*(100e-6/2048)**2/w0.get_wavelength() ))
 
     # print("Size SRW,WOFRY: ",w1.get_coordinate_x().size,w.get_coordinate_x().size)

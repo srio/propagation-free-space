@@ -205,7 +205,7 @@ if __name__ == "__main__":
     #
 
     x = np.linspace(-0.5*window_size,0.5*window_size,npoints)
-    wavefront = np.ones(npoints,dtype=complex) # * 3
+    wavefront = np.ones(npoints,dtype=complex) #* 3
     # apply aperture
     wavefront[np.where(np.abs(x)>(aperture_diameter/2))] = 0.0
 

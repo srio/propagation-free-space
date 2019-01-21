@@ -11,34 +11,40 @@ from wofry.propagator.wavefront2D.generic_wavefront import GenericWavefront2D
 
 from wofry.propagator.test.propagators_test import get_theoretical_diffraction_pattern
 
+from aperture_1D_analytical import fresnel_analytical_rectangle
 
-# def FF_propagate_wavefront(wavefront, propagation_distance, shift_half_pixel=False):
-#     shape = wavefront.size()
-#     delta = wavefront.delta()
-#     wavelength = wavefront.get_wavelength()
-#     wavenumber = wavefront.get_wavenumber()
-#     fft_scale = numpy.fft.fftfreq(shape, d=delta)
-#     fft_scale = numpy.fft.fftshift(fft_scale)
-#     x2 = fft_scale * propagation_distance * wavelength
-#
-#     if shift_half_pixel:
-#         x2 = x2 - 0.5 * numpy.abs(x2[1] - x2[0])
-#
-#     p1 = numpy.exp(1.0j * wavenumber * propagation_distance)
-#     p2 = numpy.exp(1.0j * wavenumber / 2 / propagation_distance * x2 ** 2)
-#     p3 = 1.0j * wavelength * propagation_distance
-#
-#     fft = numpy.fft.fft(wavefront.get_complex_amplitude())
-#     fft = fft * p1 * p2 / p3
-#     fft2 = numpy.fft.fftshift(fft)
-#
-#     wavefront_out = GenericWavefront1D.initialize_wavefront_from_arrays(x2, fft2, wavelength=wavefront.get_wavelength())
-#
-#     # added srio@esrf.eu 2018-03-23 to conserve energy - TODO: review method!
-#     wavefront_out.rescale_amplitude(numpy.sqrt(wavefront.get_intensity().sum() /
-#                                                wavefront_out.get_intensity().sum()))
-#
-#     return wavefront_out
+
+def fraunhofer_analytical_rectangle(
+    fresnel_number=None,propagation_distance=1.140,
+    aperture_half=1e-3,wavelength=639e-9,
+    detector_array=None,npoints=1000,
+    ):
+
+
+    if fresnel_number is None:
+        fresnel_number = aperture_half**2 / (wavelength * propagation_distance)
+
+    print("Fresnel number: ",fresnel_number)
+
+
+    if detector_array is None:
+        if fresnel_number > 1.0:
+            window_aperture_ratio = 2.0
+        else:
+            window_aperture_ratio = 1.0 / fresnel_number
+        x = numpy.linspace(-window_aperture_ratio*aperture_half,window_aperture_ratio*aperture_half,npoints)
+    else:
+        x = detector_array.copy()
+
+    argument_sinc = 2.0 * aperture_half * numpy.pi / wavelength / propagation_distance * x # TODO: check the 2??
+    alpha = 2.0 * aperture_half / (wavelength*propagation_distance)**(1.0/2.0) * \
+            numpy.exp(1j*numpy.pi/wavelength/propagation_distance * x**2) * \
+            numpy.sin(argument_sinc) / argument_sinc
+
+    # TODO note that the global phase (Goldman 4-59) is missing
+
+    return x,alpha
+
 
 def OneD_far_field_propagate_wavefront(wavefront, propagation_distance, fraunhofer=False):
     #
@@ -46,14 +52,7 @@ def OneD_far_field_propagate_wavefront(wavefront, propagation_distance, fraunhof
     #
     x = wavefront.get_abscissas()
 
-    half_max_aperture = 0.5 * (x[-1] - x[0])
 
-    if fraunhofer:
-        far_field_distance = half_max_aperture ** 2 / wavelength
-        if propagation_distance < far_field_distance:
-            print(
-                "WARNING: Fraunhoffer diffraction valid for distances > > half_max_aperture^2/lambda = %f m (propagating at %4.1f)" %
-                (far_field_distance, propagation_distance))
     #
     # compute Fourier transform
     #
@@ -80,6 +79,8 @@ def OneD_far_field_propagate_wavefront(wavefront, propagation_distance, fraunhof
 
     P1 = numpy.exp(1.0j * wavenumber * propagation_distance)
     P2 = numpy.exp(1.0j * wavenumber / 2 / propagation_distance * fsq)
+    # TODO: check the phase of this one:
+    # P2 = numpy.exp(1.0j * wavenumber / 2 / propagation_distance * x**2)
     P3 = 1.0j * wavelength * propagation_distance
 
     if fraunhofer:
@@ -92,7 +93,7 @@ def OneD_far_field_propagate_wavefront(wavefront, propagation_distance, fraunhof
     # the center of the 2D fourier transformed image.
     F1 *= P1
     F1 *= P2
-    F1 /= P3
+    F1 /= numpy.sqrt(P3) # this is 1D -> no sqrt for 2D
     F2 = numpy.fft.fftshift(F1)
 
     wavefront_out = GenericWavefront1D.initialize_wavefront_from_arrays(x_array=x2,
@@ -107,58 +108,175 @@ def OneD_far_field_propagate_wavefront(wavefront, propagation_distance, fraunhof
 
 if __name__ == "__main__":
 
+    import scipy.constants as codata
+    from srxraylib.plot.gol import plot
+    import matplotlib.pylab as plt
 
-    propagation_distance = 3.0
+    # wofry tests
+
+    # propagation_distance = 5
+    # aperture_type ="square"
+    # aperture_diameter = 40e-6
+    # wavefront_length = 800e-6
+    # wavelength = 1.24e-10
+    # npoints =1024
+    # normalization = True
+
+
+    #
+    # sajid
+    #
+    propagation_distance = 0.1
     aperture_type ="square"
-    aperture_diameter = 40e-6
-    wavefront_length = 800e-6
-    wavelength = 1.24e-10
-    npoints =1024+1
-    normalization = True
+    wavefront_length = 5e-6 * 10
+    aperture_diameter = 1.25e-6 # wavefront_length/4
+    energy = 10000.0
+    wavelength = ( codata.h*codata.c/codata.e*1e9 /energy)*10**(-9)
+    npoints = 2048 * 5
+    normalization = False
 
 
+    amplitude = (2.0 + 1.0j)
+
+    #
+    # source
+    #
     wf = GenericWavefront1D.initialize_wavefront_from_range(x_min=-wavefront_length / 2, x_max=wavefront_length / 2,
                                                             number_of_points=npoints, wavelength=wavelength)
+    wf.set_plane_wave_from_complex_amplitude(amplitude)  # an arbitraty value
+    wf.clip(-0.5*aperture_diameter,0.5*aperture_diameter)
+    # plot(wf.get_abscissas() * 1e6 , wf.get_intensity())
+    deltax = wf.get_abscissas()[1] - wf.get_abscissas()[0]
 
-    wf.set_plane_wave_from_complex_amplitude((2.0 + 1.0j))  # an arbitraty value
-
-    wf.clip(-20e-6,20e-6)
+    #
+    # numeric
+    #
 
     # wf1 = Fraunhofer1D.propagate_wavefront(wf, propagation_distance, shift_half_pixel = True)
     # wf1 = FF_propagate_wavefront(wf, propagation_distance, shift_half_pixel=False)
-    wf1 = OneD_far_field_propagate_wavefront(wf, propagation_distance, fraunhofer=True)
-
-    # get the theoretical value
+    wf1 = OneD_far_field_propagate_wavefront(wf, propagation_distance, fraunhofer=False)
     angle_x = wf1.get_abscissas() / propagation_distance
 
-    intensity_theory = get_theoretical_diffraction_pattern(angle_x, aperture_type=aperture_type,
-                                                           aperture_diameter=aperture_diameter,
-                                                           wavelength=wavelength, normalization=normalization)
-
-
-    print(intensity_theory)
-
     intensity_calculated = wf1.get_intensity()
-
     if normalization:
         intensity_calculated /= intensity_calculated.max()
 
-    if do_plot:
-        from srxraylib.plot.gol import plot
-        # plot(
-        #      wf1.get_abscissas() * 1e6 , intensity_calculated,
-        #      wf1.get_abscissas() * 1e6, intensity_theory,
-        #      # xrange=[-150,150],
-        #      legend=["numeric","analytical"]
-        #      )
+    # plot(wf1.get_abscissas() * 1e6 , intensity_calculated)
 
-        plot(wf1.get_abscissas() * 1e6 / propagation_distance, intensity_calculated,
-             angle_x * 1e6, intensity_theory,
-             legend=["Numeric", "Theoretical (far field)"],
-             legend_position=(0.95, 0.95),
-             title="1D diffraction from a %s aperture of %3.1f um at wavelength of %3.1f A" %
-                   (aperture_type, aperture_diameter * 1e6, wavelength * 1e10),
-             xtitle="X (urad)", ytitle="Intensity", xrange=[-20, 20])
+    #
+    # Fraunhofer
+    #
+
+    # using old interface (wofry tests)
+    # intensity_theory_fraunhofer = get_theoretical_diffraction_pattern(angle_x, aperture_type=aperture_type,
+    #                                                        aperture_diameter=aperture_diameter,
+    #                                                        wavelength=wavelength, normalization=normalization)
+
+    x_fraunhofer, alpha = fraunhofer_analytical_rectangle(
+                fresnel_number=None,propagation_distance=propagation_distance,
+                aperture_half=0.5*aperture_diameter,wavelength=wavelength,
+                detector_array=wf1.get_abscissas(),npoints=None,
+                )
+    intensity_theory_fraunhofer = numpy.abs(amplitude/deltax*alpha)**2
+
+    if normalization:
+        intensity_theory_fraunhofer /= intensity_theory_fraunhofer.max()
+
+
+    #
+    # Fresnel
+    #
+    x_fresnel, alpha = fresnel_analytical_rectangle(
+                fresnel_number=None,propagation_distance=propagation_distance,
+                aperture_half=0.5*aperture_diameter,wavelength=wavelength,
+                detector_array=wf1.get_abscissas(),npoints=None,
+                )
+    intensity_theory_fresnel = numpy.abs(amplitude/deltax*alpha)**2
+    if normalization:
+        intensity_theory_fresnel /= intensity_theory_fresnel.max()
+
+    #
+
+    print("||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n\n")
+
+    fresnel_number = (0.5*aperture_diameter)**2 / (wavelength * propagation_distance)
+    print("fresnel numeber: ",fresnel_number)
+
+    half_max_aperture = 0.5 * aperture_diameter # 0.5 * (wf.get_abscissas()[-1] - wf.get_abscissas()[0])
+    if propagation_distance > (2*numpy.pi*half_max_aperture**2 /wavelength):
+        test = "YESSSSSSSS"
+    else:
+        test = "NOOOOOOOOO"
+    print("Fraunhoffer condition (%s): distances >>? 2 pi half_max_aperture^2/lambda; %f >>?  %f" %
+        (test,propagation_distance,(2*numpy.pi*half_max_aperture**2 /wavelength)))
+
+
+    if propagation_distance > (npoints*deltax**2/wavelength):
+        test = "YESSSSSSSS"
+    else:
+        test = "NOOOOOOOOO"
+    print("Validity condition 1 (%s): distances >? N delta**2 / lambda; %f >?  %f " %
+        (test,propagation_distance,(npoints*deltax**2/wavelength)))
+
+    if propagation_distance > (half_max_aperture*deltax/wavelength):
+        test = "YESSSSSSSS"
+    else:
+        test = "NOOOOOOOOO"
+    print("Validity condition 1-relaxed (%s): distances >? half-aperture delta / lambda; %f >?  %f " %
+        (test,propagation_distance,half_max_aperture*deltax/wavelength))
+
+    if propagation_distance < (npoints*deltax**2/wavelength):
+        test = "YESSSSSSSS"
+    else:
+        test = "NOOOOOOOOO"
+    print("Validity condition 2 (global phase) (%s): distances <? N delta**2 / lambda; %f <?  %f " %
+        (test,propagation_distance,(npoints*deltax**2/wavelength)))
+
+    print("\n\n||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||\n\n")
+
+    if do_plot:
+        plot(
+             wf1.get_abscissas() * 1e6, intensity_calculated,
+             x_fresnel * 1e6, intensity_theory_fresnel,
+             # x_fraunhofer * 1e6, intensity_theory_fraunhofer,
+             xrange=[-200,200],yrange=[1e13,5e17],
+             ylog=True,
+             legend=["numeric","analytical (Fresnel)"], #,"analytical (Fraunhofer)",]
+             xtitle="x [um]",ytitle="Intensity [arbitrary units",
+             show=False,
+             )
+
+        dumpfile = "far_field_a.png"
+        if dumpfile is not None:
+            plt.savefig(dumpfile)
+            print("File written to disk: %s"%dumpfile)
+        plt.show()
+
+        plot(
+             wf1.get_abscissas() * 1e6, intensity_calculated,
+             x_fresnel * 1e6, intensity_theory_fresnel,
+             # x_fraunhofer * 1e6, intensity_theory_fraunhofer,
+             # xrange=[-200,200],yrange=[1e13,5e17],
+             ylog=True,
+             legend=["numeric","analytical (Fresnel)"], #,"analytical (Fraunhofer)",]
+             xtitle="x [um]",ytitle="Intensity [arbitrary units",
+             show=False,
+             )
+
+        dumpfile = "far_field_b.png"
+        if dumpfile is not None:
+            plt.savefig(dumpfile)
+            print("File written to disk: %s"%dumpfile)
+        plt.show()
+
+        # plot(wf1.get_abscissas() * 1e6 / propagation_distance, intensity_calculated,
+        #      angle_x * 1e6, intensity_theory,
+        #      x_fresnel * 1e6 / propagation_distance, intensity_theory_fresnel,
+        #      legend=["Numeric", "Analytical (Fraunhofer)","Analytical (Fresnel)"],
+        #      legend_position=(0.65, 0.95),
+        #      title="1D diffraction from a %s aperture of %3.1f um at wavelength of %3.1f A" %
+        #            (aperture_type, aperture_diameter * 1e6, wavelength * 1e10),
+        #      xtitle="X (urad)", ytitle="Intensity", xrange=[-20, 20])
 
 
 

@@ -9,7 +9,7 @@ do_plot=True
 from wofry.propagator.wavefront1D.generic_wavefront import GenericWavefront1D
 from wofry.propagator.wavefront2D.generic_wavefront import GenericWavefront2D
 
-from wofry.propagator.test.propagators_test import get_theoretical_diffraction_pattern
+# from wofry.propagator.test.propagators2D_test import get_theoretical_diffraction_pattern
 
 from aperture_1D_analytical import fresnel_analytical_rectangle
 
@@ -51,7 +51,7 @@ def OneD_far_field_propagate_wavefront(wavefront, propagation_distance, fraunhof
     # check validity
     #
     x = wavefront.get_abscissas()
-
+    deltax = wavefront.delta()
 
     #
     # compute Fourier transform
@@ -79,7 +79,7 @@ def OneD_far_field_propagate_wavefront(wavefront, propagation_distance, fraunhof
 
     P1 = numpy.exp(1.0j * wavenumber * propagation_distance)
     P2 = numpy.exp(1.0j * wavenumber / 2 / propagation_distance * fsq)
-    # TODO: check the phase of this one:
+    # TODO: check the phase of this type:
     # P2 = numpy.exp(1.0j * wavenumber / 2 / propagation_distance * x**2)
     P3 = 1.0j * wavelength * propagation_distance
 
@@ -95,6 +95,7 @@ def OneD_far_field_propagate_wavefront(wavefront, propagation_distance, fraunhof
     F1 *= P2
     F1 /= numpy.sqrt(P3) # this is 1D -> no sqrt for 2D
     F2 = numpy.fft.fftshift(F1)
+    F2 *= deltax # why??
 
     wavefront_out = GenericWavefront1D.initialize_wavefront_from_arrays(x_array=x2,
                                                                         y_array=F2,
@@ -124,7 +125,7 @@ if __name__ == "__main__":
 
 
     #
-    # sajid
+    # sajid inputs; distance increased to far field
     #
     propagation_distance = 0.1
     aperture_type ="square"
@@ -136,7 +137,7 @@ if __name__ == "__main__":
     normalization = False
 
 
-    amplitude = (2.0 + 1.0j)
+    amplitude = (5.0 + 3.0j)
 
     #
     # source
@@ -158,6 +159,7 @@ if __name__ == "__main__":
     angle_x = wf1.get_abscissas() / propagation_distance
 
     intensity_calculated = wf1.get_intensity()
+    phase_calculated = wf1.get_phase(unwrap=False)
     if normalization:
         intensity_calculated /= intensity_calculated.max()
 
@@ -177,7 +179,8 @@ if __name__ == "__main__":
                 aperture_half=0.5*aperture_diameter,wavelength=wavelength,
                 detector_array=wf1.get_abscissas(),npoints=None,
                 )
-    intensity_theory_fraunhofer = numpy.abs(amplitude/deltax*alpha)**2
+    intensity_theory_fraunhofer = numpy.abs(amplitude*alpha)**2
+    phase_theory_fraunhofer = numpy.unwrap(numpy.angle(alpha))
 
     if normalization:
         intensity_theory_fraunhofer /= intensity_theory_fraunhofer.max()
@@ -191,7 +194,9 @@ if __name__ == "__main__":
                 aperture_half=0.5*aperture_diameter,wavelength=wavelength,
                 detector_array=wf1.get_abscissas(),npoints=None,
                 )
-    intensity_theory_fresnel = numpy.abs(amplitude/deltax*alpha)**2
+    intensity_theory_fresnel = numpy.abs(amplitude*alpha)**2
+    phase_theory_fresnel = numpy.unwrap(numpy.angle(alpha))
+
     if normalization:
         intensity_theory_fresnel /= intensity_theory_fresnel.max()
 
@@ -238,11 +243,10 @@ if __name__ == "__main__":
         plot(
              wf1.get_abscissas() * 1e6, intensity_calculated,
              x_fresnel * 1e6, intensity_theory_fresnel,
-             # x_fraunhofer * 1e6, intensity_theory_fraunhofer,
-             xrange=[-200,200],yrange=[1e13,5e17],
+             xrange=[-200,200],
              ylog=True,
              legend=["numeric","analytical (Fresnel)"], #,"analytical (Fraunhofer)",]
-             xtitle="x [um]",ytitle="Intensity [arbitrary units",
+             xtitle="x [um]",ytitle="Intensity [arbitrary units]",
              show=False,
              )
 
@@ -255,8 +259,6 @@ if __name__ == "__main__":
         plot(
              wf1.get_abscissas() * 1e6, intensity_calculated,
              x_fresnel * 1e6, intensity_theory_fresnel,
-             # x_fraunhofer * 1e6, intensity_theory_fraunhofer,
-             # xrange=[-200,200],yrange=[1e13,5e17],
              ylog=True,
              legend=["numeric","analytical (Fresnel)"], #,"analytical (Fraunhofer)",]
              xtitle="x [um]",ytitle="Intensity [arbitrary units",
@@ -269,14 +271,27 @@ if __name__ == "__main__":
             print("File written to disk: %s"%dumpfile)
         plt.show()
 
-        # plot(wf1.get_abscissas() * 1e6 / propagation_distance, intensity_calculated,
-        #      angle_x * 1e6, intensity_theory,
-        #      x_fresnel * 1e6 / propagation_distance, intensity_theory_fresnel,
-        #      legend=["Numeric", "Analytical (Fraunhofer)","Analytical (Fresnel)"],
-        #      legend_position=(0.65, 0.95),
-        #      title="1D diffraction from a %s aperture of %3.1f um at wavelength of %3.1f A" %
-        #            (aperture_type, aperture_diameter * 1e6, wavelength * 1e10),
-        #      xtitle="X (urad)", ytitle="Intensity", xrange=[-20, 20])
+
+
+        # plot(wf1.get_abscissas() * 1e6, intensity_theory_fraunhofer,
+        #      wf1.get_abscissas() * 1e6, intensity_theory_fresnel,
+        #      wf1.get_abscissas() * 1e6, intensity_calculated,
+        #      wf.get_abscissas() * 1e6, wf.get_intensity(),
+        #      xrange=[-200,200],yrange=[0,1.1*numpy.abs(amplitude)**2],ylog=True,
+        #      title="intensity",
+        #      legend=["fraunhofer","fresnel","numeric","source"])
+
+
+
+        plot(wf1.get_abscissas() * 1e6, phase_theory_fraunhofer-phase_theory_fraunhofer.min(),
+             wf1.get_abscissas() * 1e6, phase_theory_fresnel-phase_theory_fresnel.min(),
+             wf1.get_abscissas() * 1e6, numpy.unwrap(
+                numpy.angle(numpy.exp(1j * wf1.get_wavenumber() * wf1.get_abscissas() ** 2 / 2 / propagation_distance))),
+             wf1.get_abscissas() * 1e6, phase_calculated-phase_calculated.min(),
+             title="phase",xrange=[-20,20],
+             legend=["analytical fraunhofer","analytical fresnel","AD HOC","numeric !! DOES NOT WORK!!!"])
+
+
 
 
 

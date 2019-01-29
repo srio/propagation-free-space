@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pylab as plt
 import scipy.constants as codata
 
-# please make specific imports insode the funcctions.
+# please make specific imports inside the functions.
 
 
 #
@@ -55,9 +55,9 @@ def propagate_with_wofry(wavefront,x,wavelength,propagation_distance,
 
     from wofry.propagator.propagator import PropagationManager, PropagationParameters
 
-    print("\n#")
-    print("# 1D aperture propagation ")
-    print("#")
+    # print("\n#")
+    # print("# 1D aperture propagation ")
+    # print("#")
 
     wf = GenericWavefront1D.initialize_wavefront_from_arrays(x,wavefront,wavelength=wavelength)
 
@@ -127,7 +127,7 @@ def propagate_with_sajid(wavefront,x,wavelength,propagation_distance,method="pro
     in_wave = wavefront # np.zeros(N)
 
 
-    print('Fresnel Number :', (L_in**2)/(wavel*z))
+    # print('Fresnel Number :', (L_in**2)/(wavel*z))
 
 
     if method == 'propTF':
@@ -219,6 +219,8 @@ if __name__ == "__main__":
     wavefront_propagated, x_propagated = propagate_with_wofry(wavefront,x,wavelength,propagation_distance,
                                 method=method,magnification_x=magnification_x)
 
+
+    print(wavefront_propagated.shape, x_propagated.shape)
     plot_intensity(
                         wavefront_propagated, 1e6 * x_propagated,
                         wavefront, 1e6 * x,

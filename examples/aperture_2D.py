@@ -219,6 +219,7 @@ if __name__ == "__main__":
     w0 = get_generic_wavefront_after_aperture(is_circular=is_circular, npixels=2048*2)
     # plot_image(w0.get_intensity(),1e6*w0.get_coordinate_x(),1e6*w0.get_coordinate_y())
 
+
     w = run_wofry(w0)
     #
     plot_image(w.get_intensity(),1e6*w.get_coordinate_x(),1e6*w.get_coordinate_y(),title="WOFRY")
@@ -236,7 +237,6 @@ if __name__ == "__main__":
     plot_image(w1.get_intensity(),1e6*w1.get_coordinate_x(),1e6*w1.get_coordinate_y(),
                xtitle="x [um]",ytitle="y [um]",title="",show=False)
 
-
     if save_png:
         if is_circular:
             plt.savefig("aperture_2D_circular_srw.png")
@@ -245,7 +245,7 @@ if __name__ == "__main__":
             plt.savefig("aperture_2D_rectangular_srw.png")
             print("File written to disk: aperture_2D_rectangular_srw.png")
     plt.show()
-
+    #
     plot(1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
          xtitle="x [um]",ytitle="Intensity [a.u]",show=False)
 
@@ -269,6 +269,14 @@ if __name__ == "__main__":
     aperture_diameter = 1.25e-06
     propagation_distance = 75e-6
 
+    #
+    # info
+    #
+    print("Size: ",w0.get_coordinate_x().size)
+    print("Dz <? N d / lambda; %g < %g"%(propagation_distance, w.get_coordinate_x().size * \
+          (w.get_coordinate_x()[1]-w.get_coordinate_x()[0])**2/wavelength))
+    print("Fresnel number: xmaxD / (lambda Dz) = %f "%(w.get_coordinate_x()[-1] / \
+          (propagation_distance * wavelength)))
 
     # inputs end
 
@@ -318,16 +326,31 @@ if __name__ == "__main__":
         yrange=None
     else:
         factor = pattern[pattern.size//2]  # note the factor to account for the y value!!
-        yrange=[0.85,1.05]
+        yrange=[0.845,1.055]
 
-    plot(
-         1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
-         1e6 * w.get_coordinate_x(), w.get_intensity()[:, w.get_coordinate_y().size // 2],
-         x*1e6,pattern*factor,
-         # legend=["WOFRY","analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
-         legend=["SRW","WOFRY","analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
-         xrange=[-0.10,0.10],yrange=yrange,
-         show=False,ylog=False)
+
+    if False:
+        plot(
+             # 1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
+             1e6 * w.get_coordinate_x(), w.get_intensity()[:, w.get_coordinate_y().size // 2],
+             x*1e6,pattern*factor,
+             legend=["WOFRY","analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
+             # legend=["SRW","WOFRY","analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
+             xrange=[-0.10,0.10],yrange=yrange,
+             show=False,ylog=False)
+
+    if True:
+        pynx_data = numpy.loadtxt("aperture2D_pynx.dat")
+        print(">>>",pynx_data.shape)
+
+        plot(
+             1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
+             1e6 * w.get_coordinate_x(), w.get_intensity()[:, w.get_coordinate_y().size // 2],
+             1e6 * pynx_data[:,0],pynx_data[:,1],
+             x*1e6,pattern*factor,
+             legend=["SRW (Standard)","WOFRY (fresnel)","PYNX (NearField)","analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
+             xrange=[-0.10, 0.10], yrange=yrange, #xrange=[-2.10,2.10],yrange=[0,3],
+             show=False,ylog=False)
 
 
     if save_png:
@@ -341,4 +364,3 @@ if __name__ == "__main__":
 
     #
     #
-    print("Size SRW,WOFRY: ",w1.get_coordinate_x().size,w.get_coordinate_x().size)

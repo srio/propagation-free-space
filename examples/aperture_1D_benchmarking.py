@@ -72,7 +72,7 @@ if __name__ == "__main__":
     magnification_x = 1.0 # 0.5
 
 
-    repeat = 1
+    repeat = 10
     #
     # Creation of wavefront
     #
@@ -86,9 +86,9 @@ if __name__ == "__main__":
     #                xlabel="x [um]",ylabel="source intensity [arbitrary units]",title="incident wavefront")
 
 
-    mymethods   = ["integral","zoom", "fft",  "fft_conv", "exact_prop_numba","propTF", "exact_prop"]
-    mylibraries = ["wofry",   "wofry","wofry","wofry",    "sajid",           "sajid",  "sajid" ]
-    mycolors    = ["r",       "r",    "r",    "r",        "b",               "b",      "b"]
+    mymethods   = ["integral","zoom", "fft",  "fft_conv", "exact_prop_numba","propTF", ] #"exact_prop"]
+    mylibraries = ["wofry",   "wofry","wofry","wofry",    "sajid",           "sajid",  ] #"sajid" ]
+    mycolors    = ["r",       "r",    "r",    "r",        "b",               "b",      ] #"b"]
 
     myresults = np.zeros(len(mymethods))
     for i in range(len(mymethods)):
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         myresults[i] = ti
 
 
-    plot_bar(mymethods,myresults,ylog=True,ytitle="time [s] for N=%d (%d runs)"%(npoints,repeat),
+    plot_bar(mymethods,myresults/repeat,ylog=True,ytitle="time [s] per run for N=%d (averaged %d runs)"%(npoints,repeat),
              colors=mycolors,filename="aperture_1D_benchmarking.png")
 
 

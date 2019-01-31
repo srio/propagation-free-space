@@ -210,7 +210,7 @@ if __name__ == "__main__":
     import matplotlib.pylab as plt
 
 
-    is_circular = False
+    is_circular = True
     save_png = True
 
     #
@@ -340,7 +340,11 @@ if __name__ == "__main__":
              show=False,ylog=False)
 
     if True:
-        pynx_data = numpy.loadtxt("aperture2D_pynx.dat")
+        if is_circular:
+            filename = "aperture2D_circular_pynx.dat"
+        else:
+            filename = "aperture2D_rectangular_pynx.dat"
+        pynx_data = numpy.loadtxt(filename)
         print(">>>",pynx_data.shape)
 
         plot(

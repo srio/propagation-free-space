@@ -14,14 +14,23 @@ aperture_diameter = 1.25e-06
 propagation_distance = 75e-6
 npixels = 2048*2
 pixel_size = window_size / npixels
-
+is_circular = False
 
 # Near field propagation of a simple slit
 w = Wavefront(d=np.zeros((npixels, npixels), dtype=np.complex64),
               pixel_size=pixel_size, wavelength=wavelength)
+
 a = aperture_diameter / 2 #20e-6 / 2
 x, y = w.get_x_y()
-w.set((abs(y) < a) * (abs(x) < a))
+
+
+if is_circular:
+    yy = np.outer(y, np.ones_like(x))
+    xx = np.outer(np.ones_like(y), x)
+    rr2 = xx ** 2 + yy ** 2
+    w.set(rr2 < a**2)
+else:
+    w.set((abs(y) < a) * (abs(x) < a))
 
 
 w = PropagateNearField(propagation_distance,magnification=1.0,verbose=True) * w
@@ -39,11 +48,16 @@ intensity = np.abs(complex_amplitude[npixels//2,:])**2
 plt.plot(xx*1e6,intensity)
 plt.show()
 
-f = open("aperture2D_pynx.dat",'w')
+if is_circular:
+    filename = "aperture2D_circular_pynx.dat"
+else:
+    filename = "aperture2D_rectangular_pynx.dat"
+
+f = open(filename,'w')
 for i in range(npixels):
     f.write("%g  %g \n"%(xx[i],intensity[i]))
 f.close()
-print("File written to disk: aperture2D_pynx.dat")
+print("File written to disk: %s"%filename)
 
 
 

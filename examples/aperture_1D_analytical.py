@@ -39,7 +39,6 @@ def fresnel_analytical_rectangle(
     Ix = (fc_minus + fc_plus) + 1j*(fs_minus + fs_plus)
     Ix *= 1.0/numpy.sqrt(2.0)
 
-    print(Ix)
     # TODO note that the global phase (Goldman 4-59) is missing
 
     return x,Ix

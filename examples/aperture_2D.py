@@ -214,49 +214,68 @@ if __name__ == "__main__":
     save_png = True
 
     #
+    # source
+    #
+
+    w0 = get_generic_wavefront_after_aperture(is_circular=is_circular, npixels=2048 * 2)
+
+    if True:
+        if is_circular:
+            w0.save_h5_file("aperture_2D_circular.h5")
+            print("File written to disk: aperture_2D_circular.h5")
+        else:
+            w0.save_h5_file("aperture_2D_rectangular.h5")
+            print("File written to disk: aperture_2D_rectangular.h5")
+
+
+    #
     # wofry
     #
-    w0 = get_generic_wavefront_after_aperture(is_circular=is_circular, npixels=2048*2)
-    # plot_image(w0.get_intensity(),1e6*w0.get_coordinate_x(),1e6*w0.get_coordinate_y())
+    if True:
 
 
-    w = run_wofry(w0)
-    #
-    plot_image(w.get_intensity(),1e6*w.get_coordinate_x(),1e6*w.get_coordinate_y(),title="WOFRY")
 
-    # plot(1e6*w.get_coordinate_x(),w.get_intensity()[:,w.get_coordinate_y().size//2],
-    #      1e6*w.get_coordinate_y(),w.get_intensity()[w.get_coordinate_x().size // 2,:],)
+        # plot_image(w0.get_intensity(),1e6*w0.get_coordinate_x(),1e6*w0.get_coordinate_y())
+
+
+        w = run_wofry(w0)
+        #
+        plot_image(w.get_intensity(),1e6*w.get_coordinate_x(),1e6*w.get_coordinate_y(),title="WOFRY")
+
+        # plot(1e6*w.get_coordinate_x(),w.get_intensity()[:,w.get_coordinate_y().size//2],
+        #      1e6*w.get_coordinate_y(),w.get_intensity()[w.get_coordinate_x().size // 2,:],)
 
 
     #
     # srw
     #
 
-    w1 = run_srw(w0)
-    #
-    plot_image(w1.get_intensity(),1e6*w1.get_coordinate_x(),1e6*w1.get_coordinate_y(),
-               xtitle="x [um]",ytitle="y [um]",title="",show=False)
+    if True:
+        w1 = run_srw(w0)
+        #
+        plot_image(w1.get_intensity(),1e6*w1.get_coordinate_x(),1e6*w1.get_coordinate_y(),
+                   xtitle="x [um]",ytitle="y [um]",title="",show=False)
 
-    if save_png:
-        if is_circular:
-            plt.savefig("aperture_2D_circular_srw.png")
-            print("File written to disk: aperture_2D_circular_srw.png")
-        else:
-            plt.savefig("aperture_2D_rectangular_srw.png")
-            print("File written to disk: aperture_2D_rectangular_srw.png")
-    plt.show()
-    #
-    plot(1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
-         xtitle="x [um]",ytitle="Intensity [a.u]",show=False)
+        if save_png:
+            if is_circular:
+                plt.savefig("aperture_2D_circular_srw.png")
+                print("File written to disk: aperture_2D_circular_srw.png")
+            else:
+                plt.savefig("aperture_2D_rectangular_srw.png")
+                print("File written to disk: aperture_2D_rectangular_srw.png")
+        plt.show()
+        #
+        plot(1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
+             xtitle="x [um]",ytitle="Intensity [a.u]",show=False)
 
-    if save_png:
-        if is_circular:
-            plt.savefig("aperture_2D_circular_profile_srw.png")
-            print("File written to disk: aperture_2D_circular_profile_srw.png")
-        else:
-            plt.savefig("aperture_2D_rectangular_profile_srw.png")
-            print("File written to disk: aperture_2D_profile_rectangular_profile_srw.png")
-    plt.show()
+        if save_png:
+            if is_circular:
+                plt.savefig("aperture_2D_circular_profile_srw.png")
+                print("File written to disk: aperture_2D_circular_profile_srw.png")
+            else:
+                plt.savefig("aperture_2D_rectangular_profile_srw.png")
+                print("File written to disk: aperture_2D_profile_rectangular_profile_srw.png")
+        plt.show()
 
     #
     # calculate analytical
@@ -332,9 +351,9 @@ if __name__ == "__main__":
     if False:
         plot(
              # 1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
-             1e6 * w.get_coordinate_x(), w.get_intensity()[:, w.get_coordinate_y().size // 2],
+             # 1e6 * w.get_coordinate_x(), w.get_intensity()[:, w.get_coordinate_y().size // 2],
              x*1e6,pattern*factor,
-             legend=["WOFRY","analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
+             legend=["analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
              # legend=["SRW","WOFRY","analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
              xrange=[-0.10,0.10],yrange=yrange,
              show=False,ylog=False)
@@ -349,10 +368,12 @@ if __name__ == "__main__":
 
         plot(
              1e6*w1.get_coordinate_x(),w1.get_intensity()[:,w1.get_coordinate_y().size//2],
-             1e6 * w.get_coordinate_x(), w.get_intensity()[:, w.get_coordinate_y().size // 2],
-             1e6 * pynx_data[:,0],pynx_data[:,1],
+             1e6*w.get_coordinate_x(),w.get_intensity()[:,w.get_coordinate_y().size//2],
+             1e6*pynx_data[:,0],pynx_data[:,1],
              x*1e6,pattern*factor,
-             legend=["SRW (Standard)","WOFRY (fresnel)","PYNX (NearField)","analytical"],xtitle="x[um]",ytitle="Intensity [a.u.]",
+             legend=["SRW (Standard)","WOFRY (fresnel)","PYNX (NearField)","analytical"],
+             # legend=["WOFRY (fresnel)", "PYNX (NearField)", "analytical"],
+             xtitle="x[um]",ytitle="Intensity [a.u.]",
              xrange=[-0.10, 0.10], yrange=yrange, #xrange=[-2.10,2.10],yrange=[0,3],
              show=False,ylog=False)
 

@@ -69,51 +69,56 @@ def semi_analytical_integral(wavefront, k, x, z, R, method = 0):
 
     return numpy.multiply(global_phase,E2), x
 
-def get_fft_scale(npixels,wavefront_delta):
 
+def fresnel_srw(wavefront,k,x,z):
+    wavefront_wavelength = 2 * numpy.pi / k
+    wavefront_delta = x[1] - x[0]
+    wavefront_size = wavefront.size
+    propagation_distance = z
+
+    npixels = wavefront_size
     freq_nyquist = 0.5 / wavefront_delta
-
     if numpy.mod(npixels, 2) == 0:
         freq_n = numpy.arange(-npixels // 2, npixels // 2, 1) / (npixels // 2)
     else:
         freq_n = numpy.arange(-(npixels - 1) // 2, (npixels + 1) // 2, 1) / ((npixels - 1) // 2)
 
-    fft_scale = freq_n * freq_nyquist
+    theta = freq_n * freq_nyquist * wavefront_wavelength
 
-    return numpy.fft.fftshift(fft_scale)
-
-def semi_analytical(wavefront,k,x,z,R, method = 0):
-    ''' This semi-analytical implementation is based on change of variables - beta and alpha'''
-    quadratic_term = numpy.exp((-1j*k*x**2)/(2*R))
-    F1 = numpy.multiply(wavefront,quadratic_term)
-    C = k * numpy.exp(0.5 * (1j * k * x ** 2) / (R + z)) / (1j * 2 * numpy.pi * z)
-
-    if (method == 0) or (method == 1) or (method == 2):
-        fft_F1 = numpy.fft.fft(F1)
-
-        alpha = 0.5*(1/R + 1/z)
-        kappa = 1 + z/R
-        beta  = x/kappa
-
-    if method == -1: # F(h)*Kernel(f) with a different kernel
-        freq   = get_fft_scale(wavefront.size, x[1]-x[0])
-        kernel = numpy.sqrt((R+z)/R)*z*1j*numpy.exp(-1j*numpy.pi**2 *(R+z)*freq**2 /(R*k))
-
-    elif method == 0: # F(h)*Kernel(f)
-        # freq  = get_fft_scale(wavefront.size, x[1]-x[0])
-        freq   = get_fft_scale(wavefront.size, beta[1]-beta[0])
-        kernel = numpy.exp((-1j*numpy.pi**2 * freq**2)/(alpha*k))
-
-    elif method == 1: # F(h)*F(kernel)
-        kernel = numpy.fft.fft(numpy.exp(1j*k*alpha*beta**2))
-
-    elif method == 2: # numpy.convolve(h,g)
-        E2 = C*numpy.convolve(F1,numpy.exp(1j*k*alpha*beta**2),'same')
-
-    if (method == -1) or (method == 0) or (method == 1):
-        E2 = C*numpy.fft.ifft(numpy.multiply(fft_F1, kernel))
+    fft_E1 = numpy.fft.fft(wavefront)
+    K = numpy.exp(-0.5j * k * propagation_distance * numpy.fft.fftshift(theta)**2)
+    C = numpy.exp(1j * k * propagation_distance) / (1j * propagation_distance * wavefront_wavelength)
+    E2 = C * numpy.fft.ifft(fft_E1 * K)
 
     return E2, x
+
+
+def semi_analytical(wavefront,k,x,z,R):
+    ''' This semi-analytical implementation is based on change of variables - beta and alpha'''
+    quadratic_term =  1.0 # numpy.exp((-1j*k*x**2)/(2*R))
+    F1 = numpy.multiply(wavefront,quadratic_term)
+
+    wavefront_wavelength = 2 * numpy.pi / k
+    wavefront_delta = x[1] - x[0]
+    wavefront_size = wavefront.size
+    propagation_distance = z
+
+    npixels = wavefront_size
+    freq_nyquist = 0.5 / wavefront_delta
+    if numpy.mod(npixels, 2) == 0:
+        freq_n = numpy.arange(-npixels // 2, npixels // 2, 1) / (npixels // 2)
+    else:
+        freq_n = numpy.arange(-(npixels - 1) // 2, (npixels + 1) // 2, 1) / ((npixels - 1) // 2)
+
+    theta = freq_n * freq_nyquist * wavefront_wavelength
+
+    fft_F1 = numpy.fft.fft(F1)
+    G = 1j * propagation_distance * wavefront_wavelength * (R / (R + propagation_distance)) * \
+        numpy.exp(-0.5j * k * propagation_distance * numpy.fft.fftshift(theta)**2)
+    C = numpy.exp(1j * k * propagation_distance) / (1j * propagation_distance * wavefront_wavelength**3)
+    F2 = C * numpy.fft.ifft(fft_F1 * G)
+
+    return F2, x
 
 if __name__ == "__main__":
     # wavefront input parameters
@@ -134,21 +139,27 @@ if __name__ == "__main__":
     # ========================== Wave propagation to z
     #TODO normalise intensity output
 
-    propagated_wft_fresnel, propagated_x = fresnel(wfr, 2*numpy.pi/wavelength,x, z, radius*defocus)
-    propagated_wft_semi_analytical, propagated_x  = semi_analytical(wfr, 2*numpy.pi/wavelength,x, z, radius*defocus, method = 0)
-    propagated_wft_integral, propagated_x = semi_analytical_integral(wfr, 2 * numpy.pi / wavelength, x, z, radius *defocus)
+    # propagated_wft_fresnel, propagated_x = fresnel(wfr, 2*numpy.pi/wavelength,x, z, radius*defocus)
+    propagated_wft_fresnel_srw, propagated_x = fresnel_srw(wfr, 2 * numpy.pi / wavelength, x, z)
+    propagated_wft_semi_analytical, propagated_x  = semi_analytical(wfr, 2*numpy.pi/wavelength,x, z, radius*defocus)
+    # propagated_wft_integral, propagated_x = semi_analytical_integral(wfr, 2 * numpy.pi / wavelength, x, z, radius *defocus)
 
     title = 'Semi analytical treatment of the quadratic phase term '
     plot(propagated_x*1E6,get_phase(propagated_wft_semi_analytical, 0, 1),xtitle="x [um]",ytitle="Phase[ f(x) ]",title=title,show=False)
     plot(propagated_x*1E6,get_intensity(propagated_wft_semi_analytical),xtitle="x [um]",ytitle="Intensity[ f(x) ]",title=title,show=False)
 
-    title = 'Integral formulation of the semi-analytical'
-    plot(propagated_x*1E6,get_phase(propagated_wft_integral, 0, 1),xtitle="x [um]",ytitle="Phase[ f(x) ]",title=title,show=False)
-    plot(propagated_x*1E6,get_intensity(propagated_wft_integral),xtitle="x [um]",ytitle="Intensity[ f(x) ]",title=title,show=False)
+    # title = 'Integral formulation of the semi-analytical'
+    # plot(propagated_x*1E6,get_phase(propagated_wft_integral, 0, 1),xtitle="x [um]",ytitle="Phase[ f(x) ]",title=title,show=False)
+    # plot(propagated_x*1E6,get_intensity(propagated_wft_integral),xtitle="x [um]",ytitle="Intensity[ f(x) ]",title=title,show=False)
 
-    title = 'fresnel'
-    plot(propagated_x*1E6,get_phase(propagated_wft_fresnel, 0, 1),xtitle="x [um]",ytitle="Phase[ f(x) ]",title=title,show=False)
-    plot(propagated_x*1E6,get_intensity(propagated_wft_fresnel),xtitle="x [um]",ytitle="Intensity[ f(x) ]",title=title,show=False)
+    # title = 'fresnel'
+    # plot(propagated_x*1E6,get_phase(propagated_wft_fresnel, 0, 1),xtitle="x [um]",ytitle="Phase[ f(x) ]",title=title,show=False)
+    # plot(propagated_x*1E6,get_intensity(propagated_wft_fresnel),xtitle="x [um]",ytitle="Intensity[ f(x) ]",title=title,show=False)
+
+    title = 'fresnel_srw'
+    plot(propagated_x*1E6,get_phase(propagated_wft_fresnel_srw, 0, 1),xtitle="x [um]",ytitle="Phase[ f(x) ]",title=title,show=False)
+    plot(propagated_x*1E6,get_intensity(propagated_wft_fresnel_srw),xtitle="x [um]",ytitle="Intensity[ f(x) ]",title=title,show=False)
+
 
     plt.show()
 
